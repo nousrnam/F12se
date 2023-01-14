@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="SettingsEdit">
+		<id_arg>0</id_arg>
+		<object class="wxBoxSizer" variable="BoxSizer1" member="no">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer2" member="no">
+					<object class="sizeritem">
+						<object class="wxStaticText" name="lblPath" variable="StaticText1" member="yes">
+							<label>Path:</label>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxComboBox" name="ID_COMBOBOX1" variable="cbPath" member="yes">
+							<handler function="OncbPathSelected" entry="EVT_COMBOBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="bBrowse" variable="btnBrowse" member="yes">
+							<label>Browse...</label>
+							<handler function="OnbtnBrowseClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxRadioBox" name="rboxGame" variable="rbGame" member="yes">
+							<label>Game</label>
+							<content>
+								<item>Fallout</item>
+								<item>Fallout 2</item>
+							</content>
+							<default>1</default>
+							<dimension>2</dimension>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer3" member="no">
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer4" member="no">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="sbsInterface" member="no">
+									<label>Interface language</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxListBox" name="ID_LISTBOX1" variable="lbLngFiles" member="yes">
+											<default>-1</default>
+										</object>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+									</object>
+								</object>
+								<flag>wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticBoxSizer" variable="sbsLogging" member="no">
+									<label>Logging</label>
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<object class="wxCheckBox" name="cboxLogInfo" variable="cbntst_log_info" member="yes">
+											<label>Log info messages</label>
+										</object>
+										<flag>wxALIGN_LEFT</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxCheckBox" name="cboxLogWarning" variable="cbntst_log_warning" member="yes">
+											<label>Log warnings</label>
+											<checked>1</checked>
+										</object>
+										<flag>wxALIGN_LEFT</flag>
+										<border>5</border>
+									</object>
+									<object class="sizeritem">
+										<object class="wxCheckBox" name="cboxLogError" variable="cbntst_log_error" member="yes">
+											<label>Log errors</label>
+											<checked>1</checked>
+										</object>
+										<flag>wxALIGN_LEFT</flag>
+										<border>5</border>
+									</object>
+								</object>
+								<flag>wxBOTTOM|wxRIGHT|wxEXPAND</flag>
+								<border>5</border>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer" variable="sbsOverride" member="no">
+							<label>Override</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblOverrideFalloutExe" variable="lblFalloutExe" member="yes">
+									<label>fallout?.exe</label>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="txtFalloutExe" member="yes" />
+								<flag>wxALL|wxEXPAND</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblOverrideFalloutCfg" variable="lblFalloutCfg" member="yes">
+									<label>fallout?.cfg</label>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL4" variable="txtFalloutCfg" member="yes" />
+								<flag>wxALL|wxEXPAND</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblOverrideFalloutLanguage" variable="lblFalloutLanguage" member="yes">
+									<label>fallout?.cfg [system] language</label>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="txtMsgDir" member="yes" />
+								<flag>wxALL|wxEXPAND</flag>
+								<border>2</border>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticBoxSizer" variable="sbsAutoCorrection" member="no">
+							<label>Auto correction</label>
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="cboxCorItemFid" variable="cbCorItemFid" member="yes">
+									<label>Item&apos;s FID</label>
+									<checked>1</checked>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="cboxCorAmmoT" variable="cbCorAmmoT" member="yes">
+									<label>Ammo type</label>
+									<checked>1</checked>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="cboxCorAmmoQ" variable="cbCorAmmoQ" member="yes">
+									<label>Ammo quantity</label>
+									<checked>1</checked>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="cboxCorPerks" variable="cbCorPerks" member="yes">
+									<label>Perks</label>
+									<checked>1</checked>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="cboxCorTraits" variable="cbCorTraits" member="yes">
+									<label>Traits</label>
+									<checked>1</checked>
+								</object>
+								<flag>wxALL|wxALIGN_LEFT</flag>
+								<border>2</border>
+							</object>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer5" member="no">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblBrightness" variable="StaticText2" member="yes">
+									<label>Images brightness</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxScrollBar" name="ID_SCROLLBAR1" variable="sbBrightness" member="yes">
+									<thumbsize>1</thumbsize>
+									<range>101</range>
+									<pagesize>1</pagesize>
+									<style>wxSB_HORIZONTAL</style>
+								</object>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxRadioBox" name="rboxImagesResize" variable="rbImagesResize" member="yes">
+									<label>Images resize algorithm</label>
+									<content>
+										<item>Nearest</item>
+										<item>Bilinear</item>
+										<item>Bicubic</item>
+									</content>
+									<default>1</default>
+								</object>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>2</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxBoxSizer" variable="BoxSizer6" member="no">
+									<object class="sizeritem">
+										<object class="wxButton" name="bCancel" variable="btnCancel" member="yes">
+											<label>Cancel</label>
+											<handler function="OnbtnCancelClick" entry="EVT_BUTTON" />
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+									<object class="sizeritem">
+										<object class="wxButton" name="bOk" variable="btnOk" member="yes">
+											<label>OK</label>
+											<handler function="OnbtnOkClick" entry="EVT_BUTTON" />
+										</object>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<option>1</option>
+									</object>
+								</object>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+					</object>
+				</object>
+				<flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+		</object>
+	</object>
+</wxsmith>

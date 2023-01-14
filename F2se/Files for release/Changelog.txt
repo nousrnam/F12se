@@ -1,0 +1,66 @@
+﻿YYYY-MM-DD
+
+2023-01-15
+-Added traits auto fix option.
+The game expects the player has the first trait slot set when trying to print the trait info on the character screen.
+If the first slot is empty (value -1) it skips to perk printing without checking the second slot, so in the character screen the player won't see his only trait.
+The game does take the trait into account when checking/applying related effects, just not showing up.
+-Uploaded source to https://github.com/nousrnam/F12se
+
+2020-05-10
+-One more fix. Now should be compatible with "Fallout et tu" https://github.com/rotators/Fo1in2
+
+2019-11-17
+-Fixed last changes. Now should be compatible with "Fallout 2 Restoration Project, updated" https://nma-fallout.com/threads/up-and-rp-updates.217877/
+
+2019-07-21
+-Changed files search order:
+master_patches (if DataLoadOrderPatch in ddraw.ini)
+critter_patches (if DataLoadOrderPatch in ddraw.ini)
+ddraw.ini [ExtraPatches] PatchFile99 - PatchFile0
+ddraw.ini [ExtraPatches] AutoSearchPath
+sfall.dat
+patchXXX.dat OR ddraw.ini [Misc] PatchFile
+critter_patches (if not DataLoadOrderPatch in ddraw.ini)
+critter_dat
+f2_res.ini [MAIN] f2_res_patches (if Fallout2)
+f2_res.ini [MAIN] f2_res_dat (if Fallout2)
+master_patches (if not DataLoadOrderPatch in ddraw.ini)
+master_dat
+game directory. Although should be current directory. But user can create link to executable and specify any directory as current.
+
+2019-07-14
+-Support for mods where sfall is used to replace patch000.dat with custom name.
+
+2019-07-06
+-Fixed saving current map for the car.
+-Fixed reading game path when installed in steam.
+-Added slots ascending sorting. Before they were not sorted at all, it is a coincidence that they had ascending order in most cases.
+
+2018-06-30
+-Some users set path to "gamedir\data\savegame" or "gamedir\data\savegame\slot01" instead of "gamedir". The path will be automatically corrected, if possible.
+
+2017-12-15
+-The most common question is: "Why are there no changes in the game as a result of the changes in the editor?" So now errors when saving are not only recorded in the log, but also displayed in the messagebox.
+Usually the reason is that the game is installed in the "Program Files...", and Windows prevents the files from being changed there.
+
+2017-09-11
+-Editor now should work with absolute paths in Fallout cfg file.
+-Added more logging to help identify problems.
+
+2017-08-22
+-Support for multi-byte character encodings. Done for Chinese game version.
+-Fixed possible crash when loading sfallgv.sav
+-Settings window will always appear at start if path to game is not set. Editor no longer silently uses first found path. Also combobox is now used for game path. It makes possible to select one of the found path.
+-Some hardly noticeable changes. Like: escape button closes modal dialogs, double click on item in inventory opens same dialog as "Edit" button. Other changes are even less noticeable.
+
+2016-07-21
+-Settings to override exe and cfg files. Required for Resurrection mod:
+cfg=fores.cfg
+exe=FALLOUT2
+
+2015-07-15
+-Fixed saving edited critters.
+-Added worldmap reset.
+-Added global variables reset.
+-Updated wxWidgets to 3.0.2 -> exe file size growth.

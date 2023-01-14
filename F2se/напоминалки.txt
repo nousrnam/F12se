@@ -1,0 +1,50 @@
+Когда компилю tdmgcc в версиях wxWidgets после 3.0.x интерфейс корявится.
+
+
+If DataLoadOrderPatch is enabled, the data load order will be: master_patches > critter_patches > PatchFileXX > mods > sfall.dat > patchXXX.dat
+
+flto в гцц не робит по простому для библиотек. В линуксе ar на gcc-ar заменяют. Но я фокусам заниматься не хочу.
+Даже проект похоже падает с flto. Так что обрезаем размеры редактора и wx без flto.
+
+Если гцц при компиляции на одр ругается что-то не так с заголовком относительно библиотеки. Копировать тот setup.h который правлю в кучу заголовков.
+
+Сообщения о разных размерах виртуальных таблиц может при несовпадении rtti редактора и виджетов
+
+wxUSE_DISPLAY возможно должно быть 1. У меня используется получение разрешения. Но при 1 перестаёт собираться gcc. Так что 0.
+
+Если вижу при компиляции
+../../src/msw/display.cpp:632:5: error: 'RECT' was not declared in this scope
+#include <windows.h> в него после #include "wx/wxprec.h" до #if wxUSE_DISPLAY 
+
+Если
+../../src/msw/menu.cpp:293:16: error: invalid use of incomplete type 'const class wxBitmap'
+добавить #include "wx/bitmap.h" в начало menu.cpp и menuitem.cpp
+
+3.1
+gcc_mswu\corelib_vlbo.o: No such file or directory переименовать corelib_vlbox.o
+Вставить куда-нить в свой код. В коде либы оно выбрасывается при отключеном риче
+wxMenu *wxTextCtrl::MSWCreateContextMenu()
+{
+    wxMenu *m = new wxMenu;
+    m->Append(wxID_UNDO, _("&Undo"));
+    m->Append(wxID_REDO, _("&Redo"));
+    m->AppendSeparator();
+    m->Append(wxID_CUT, _("Cu&t"));
+    m->Append(wxID_COPY, _("&Copy"));
+    m->Append(wxID_PASTE, _("&Paste"));
+    m->Append(wxID_CLEAR, _("&Delete"));
+    m->AppendSeparator();
+    m->Append(wxID_SELECTALL, _("Select &All"));
+    return m;
+}
+
+Если в фаллауте черный экран без ничего, по которому бегать можно, значит прошки были грохнуты.
+
+data\proto
+
+Darek:
+The edited protos needs to be write protected or the game will delete them when you start the game.
+Also, don't put the base proto (first proto of a critter that can level up) into the ...data\proto\critters folder, because if it is write protected it will make the proto version that is in your save game write protected too (so then the critter wont save when it has leveled up).
+
+When you load a save, the game reads the NPC follower's proto that is in the save slot. Then it puts that proto temporarily in the ...data/proto/critters folder (to be able to update it when needed without having everything in memory).
+When you save the game, that "work" version of the proto replaces the out of date version on your save slot.

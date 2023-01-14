@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxFrame" name="CrittersEdit">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
+		<handler function="OnClose" entry="EVT_CLOSE" />
+		<object class="wxBoxSizer" variable="BoxSizer1" member="no">
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer2" member="no">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="lblCrittersList" variable="StaticText1" member="yes">
+							<label>Critters list</label>
+						</object>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxListBox" name="ID_LISTBOX1" variable="lbFiles" member="yes">
+							<default>-1</default>
+							<handler function="OnlbFilesSelect" entry="EVT_LISTBOX" />
+						</object>
+						<flag>wxTOP|wxBOTTOM|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="bSave" variable="btnSave" member="yes">
+							<label>Save selected file</label>
+							<handler function="OnbtnSaveClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxTOP|wxBOTTOM|wxLEFT|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer3" member="no">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="lblStatsBase" variable="StaticText2" member="yes">
+							<label>Base Stats</label>
+						</object>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxListBox" name="ID_LISTBOX2" subclass="MyListBox" variable="lbBaseStats" member="yes">
+							<default>-1</default>
+							<handler function="OnlbBaseStatsSelect" entry="EVT_LISTBOX" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer5" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblStatsBaseValue" variable="StaticText4" member="yes">
+									<label>Value</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="txtBaseStatVal" member="yes">
+									<handler function="OntxtBaseStatValText" entry="EVT_TEXT" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer4" member="no">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="lblStatsBonus" variable="StaticText3" member="yes">
+							<label>Bonus Stats</label>
+						</object>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxListBox" name="ID_LISTBOX3" subclass="MyListBox" variable="lbBonusStats" member="yes">
+							<default>-1</default>
+							<handler function="OnlbBonusStatsSelect" entry="EVT_LISTBOX" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer6" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblStatsBonusValue" variable="StaticText5" member="yes">
+									<label>Value</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="txtBonusStatVal" member="yes">
+									<handler function="OntxtBonusStatValText" entry="EVT_TEXT" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxTOP|wxLEFT|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer7" member="no">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="lblSkills" variable="StaticText6" member="yes">
+							<label>Skills</label>
+						</object>
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxListBox" name="ID_LISTBOX4" subclass="MyListBox" variable="lbSkills" member="yes">
+							<default>-1</default>
+							<handler function="OnlbSkillsSelect" entry="EVT_LISTBOX" />
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer8" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblSkillVal" variable="StaticText7" member="yes">
+									<label>Value</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="txtSkillVal" member="yes">
+									<handler function="OntxtSkillValText" entry="EVT_TEXT" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxBarter" variable="cbBarter" member="yes">
+							<label>Can trade with</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxSteal" variable="cbSteal" member="yes">
+							<label>Can&apos;t steal from</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxDrop" variable="cbDrop" member="yes">
+							<label>Doesn&apos;t drop items</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxLimbs" variable="cbLimbs" member="yes">
+							<label>Can&apos;t lose limbs</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxAges" variable="cbAges" member="yes">
+							<label>Dead body doesn&apos;t disappear</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxHeal" variable="cbHeal" member="yes">
+							<label>Damage isn&apos;t cured with time</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxInvulnerable" variable="cbInvulnerable" member="yes">
+							<label>Can&apos;t be hurt</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxFlatten" variable="cbFlatten" member="yes">
+							<label>Leaves no dead body</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxSpecial" variable="cbSpecial" member="yes">
+							<label>Special type of death</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxRange" variable="cbRange" member="yes">
+							<label>Melee attack at a distance</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="cboxKnock" variable="cbKnock" member="yes">
+							<label>Can&apos;t be knocked down</label>
+							<handler function="OncboxClick" entry="EVT_CHECKBOX" />
+						</object>
+						<flag>wxALL|wxALIGN_LEFT</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxBoxSizer" variable="BoxSizer9" member="no">
+							<object class="sizeritem">
+								<object class="wxStaticText" name="lblFrmId" variable="StaticText8" member="yes">
+									<label>FRM ID(no effect)</label>
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+							<object class="sizeritem">
+								<object class="wxTextCtrl" name="ID_TEXTCTRL4" variable="txtFID" member="yes">
+									<handler function="OnTxtText" entry="EVT_TEXT" />
+								</object>
+								<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+							</object>
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="bCancel" variable="btnCancel" member="yes">
+							<label>Cancel</label>
+							<handler function="OnbtnCloseClick" entry="EVT_BUTTON" />
+						</object>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+		</object>
+	</object>
+</wxsmith>

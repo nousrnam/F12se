@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="F12se" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Mingw">
+				<Option output="bin/Debug/F12se" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-Wnon-virtual-dtor" />
+					<Add option="-Wshadow" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-Wunreachable-code" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-Wno-deprecated-declarations" />
+				</Compiler>
+				<Linker>
+					<Add option="-mthreads -static" />
+					<Add library="wxmsw30ud_core" />
+					<Add library="wxbase30ud" />
+				</Linker>
+			</Target>
+			<Target title="Release Mingw">
+				<Option output="bin/Release/F12se" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-fomit-frame-pointer" />
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O2" />
+					<Add option="-Winit-self" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wcast-align" />
+					<Add option="-Wunreachable-code" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-Wno-deprecated-declarations -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -fno-stack-protector" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-O2" />
+					<Add option="-mthreads -static -s  -Wl,--gc-sections -Wl,--strip-all" />
+					<Add library="wxmsw30u_core" />
+					<Add library="wxbase30u" />
+				</Linker>
+			</Target>
+			<Target title="Debug VC">
+				<Option output="bin/DebugVS/F12se" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/DebugVS/" />
+				<Option type="0" />
+				<Option compiler="msvc10" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="/MTd" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/Od" />
+					<Add option="/Zi" />
+					<Add option="/D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/D_CRT_NONSTDC_NO_DEPRECATE" />
+				</Compiler>
+				<Linker>
+					<Add option="/debug" />
+					<Add library="rpcrt4" />
+					<Add library="wxmsw32ud_core" />
+					<Add library="wxbase32ud" />
+				</Linker>
+			</Target>
+			<Target title="Release VC">
+				<Option output="bin/ReleaseVS/F12se" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/ReleaseVS/" />
+				<Option type="0" />
+				<Option compiler="msvc10" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="/MT" />
+					<Add option="/GL" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/Gy" />
+					<Add option="/GF" />
+					<Add option="/Oy" />
+					<Add option="/Oi" />
+					<Add option="/Ox" />
+					<Add option="/W3" />
+					<Add option="/Ob2" />
+					<Add option="/DNDEBUG" />
+					<Add option="/D_CRT_SECURE_NO_WARNINGS" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/D_CRT_NONSTDC_NO_DEPRECATE" />
+				</Compiler>
+				<Linker>
+					<Add option="/LTCG /FIXED /OPT:REF" />
+					<Add library="rpcrt4" />
+					<Add library="wxmsw32u_core" />
+					<Add library="wxbase32u" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-pipe" />
+			<Add option="-mthreads" />
+			<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
+			<Add option="-Wno-long-long" />
+			<Add option="-Wno-variadic-macros" />
+			<Add option="-D__GNUWIN32__" />
+			<Add option="-D__WXMSW__" />
+			<Add directory="../F2seMyLibs" />
+			<Add directory="../F2seMyLibs/SimpleHexEdit" />
+			<Add directory="../F2seTPL" />
+			<Add directory="../F2seTPL/wxWidgets/include" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="../F2seTPL/wxWidgets/include" />
+		</ResourceCompiler>
+		<Linker>
+			<Add library="kernel32" />
+			<Add library="user32" />
+			<Add library="gdi32" />
+			<Add library="comdlg32" />
+			<Add library="winspool" />
+			<Add library="advapi32" />
+			<Add library="shell32" />
+			<Add library="wsock32" />
+			<Add library="odbc32" />
+			<Add library="oleaut32" />
+			<Add library="uuid" />
+			<Add library="comctl32" />
+			<Add library="ole32" />
+			<Add library="Version" />
+			<Add library="UxTheme" />
+			<Add library="oleacc" />
+			<Add library="Shlwapi" />
+			<Add directory="../F2seTPL/wxWidgets/lib" />
+		</Linker>
+		<Unit filename="../F2seMyLibs/CityTxt.cpp" />
+		<Unit filename="../F2seMyLibs/CityTxt.h" />
+		<Unit filename="../F2seMyLibs/DataModel.cpp" />
+		<Unit filename="../F2seMyLibs/DataModel.h" />
+		<Unit filename="../F2seMyLibs/Defines.h" />
+		<Unit filename="../F2seMyLibs/FRM.cpp" />
+		<Unit filename="../F2seMyLibs/FRM.h" />
+		<Unit filename="../F2seMyLibs/FileFinder.cpp" />
+		<Unit filename="../F2seMyLibs/FileFinder.h" />
+		<Unit filename="../F2seMyLibs/GAM.cpp" />
+		<Unit filename="../F2seMyLibs/GAM.h" />
+		<Unit filename="../F2seMyLibs/IniFile.cpp" />
+		<Unit filename="../F2seMyLibs/IniFile.h" />
+		<Unit filename="../F2seMyLibs/MSG.cpp" />
+		<Unit filename="../F2seMyLibs/MSG.h" />
+		<Unit filename="../F2seMyLibs/MemBuffer.cpp" />
+		<Unit filename="../F2seMyLibs/MemBuffer.h" />
+		<Unit filename="../F2seMyLibs/MemBufferEX.cpp" />
+		<Unit filename="../F2seMyLibs/MemBufferEX.h" />
+		<Unit filename="../F2seMyLibs/PRO.cpp" />
+		<Unit filename="../F2seMyLibs/PRO.h" />
+		<Unit filename="../F2seMyLibs/SAV.cpp" />
+		<Unit filename="../F2seMyLibs/SAV.h" />
+		<Unit filename="../F2seMyLibs/SFallGV.cpp" />
+		<Unit filename="../F2seMyLibs/SFallGV.h" />
+		<Unit filename="../F2seMyLibs/SaveDat.cpp" />
+		<Unit filename="../F2seMyLibs/SaveDat.h" />
+		<Unit filename="../F2seMyLibs/Settings.cpp" />
+		<Unit filename="../F2seMyLibs/Settings.h" />
+		<Unit filename="../F2seMyLibs/SimpleHexEdit/shecBase.h" />
+		<Unit filename="../F2seMyLibs/SimpleHexEdit/shecWX.cpp" />
+		<Unit filename="../F2seMyLibs/SimpleHexEdit/shecWX.h" />
+		<Unit filename="../F2seMyLibs/U8String.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/U8String.h" />
+		<Unit filename="../F2seMyLibs/VecOfStr.cpp" />
+		<Unit filename="../F2seMyLibs/VecOfStr.h" />
+		<Unit filename="../F2seMyLibs/WinFunc.cpp" />
+		<Unit filename="../F2seMyLibs/WinFunc.h" />
+		<Unit filename="../F2seMyLibs/commontypes.h" />
+		<Unit filename="../F2seMyLibs/fallout.cpp" />
+		<Unit filename="../F2seMyLibs/fallout.h" />
+		<Unit filename="../F2seMyLibs/misc.cpp" />
+		<Unit filename="../F2seMyLibs/misc.h" />
+		<Unit filename="../F2seMyLibs/ntst_base.h" />
+		<Unit filename="../F2seMyLibs/ntst_bytes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_bytes.h" />
+		<Unit filename="../F2seMyLibs/ntst_error.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_error.h" />
+		<Unit filename="../F2seMyLibs/ntst_logging.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_logging.h" />
+		<Unit filename="../F2seMyLibs/ntst_loggingpp.cpp" />
+		<Unit filename="../F2seMyLibs/ntst_loggingpp.hpp" />
+		<Unit filename="../F2seMyLibs/ntst_mem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_mem.h" />
+		<Unit filename="../F2seMyLibs/ntst_string.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_string.h" />
+		<Unit filename="../F2seMyLibs/ntst_stringpp.cpp" />
+		<Unit filename="../F2seMyLibs/ntst_stringpp.hpp" />
+		<Unit filename="../F2seMyLibs/ntst_thread.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_thread.h" />
+		<Unit filename="../F2seMyLibs/ntst_time.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seMyLibs/ntst_time.h" />
+		<Unit filename="../F2seTPL/lzss.cpp" />
+		<Unit filename="../F2seTPL/lzss.h" />
+		<Unit filename="../F2seTPL/zlib/adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/compress.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/crc32.h" />
+		<Unit filename="../F2seTPL/zlib/deflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/deflate.h" />
+		<Unit filename="../F2seTPL/zlib/gzclose.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/gzguts.h" />
+		<Unit filename="../F2seTPL/zlib/gzlib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/gzread.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/gzwrite.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/infback.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/inffast.h" />
+		<Unit filename="../F2seTPL/zlib/inffixed.h" />
+		<Unit filename="../F2seTPL/zlib/inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/inflate.h" />
+		<Unit filename="../F2seTPL/zlib/inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/inftrees.h" />
+		<Unit filename="../F2seTPL/zlib/trees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/trees.h" />
+		<Unit filename="../F2seTPL/zlib/uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/zconf.h" />
+		<Unit filename="../F2seTPL/zlib/zlib.h" />
+		<Unit filename="../F2seTPL/zlib/zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../F2seTPL/zlib/zutil.h" />
+		<Unit filename="Common.cpp" />
+		<Unit filename="Common.h" />
+		<Unit filename="CrittersEdit.cpp" />
+		<Unit filename="CrittersEdit.h" />
+		<Unit filename="F2seApp.cpp" />
+		<Unit filename="F2seApp.h" />
+		<Unit filename="F2seMain.cpp" />
+		<Unit filename="F2seMain.h" />
+		<Unit filename="ItemEdit.cpp" />
+		<Unit filename="ItemEdit.h" />
+		<Unit filename="Localization.cpp" />
+		<Unit filename="Localization.h" />
+		<Unit filename="MyListBox.h" />
+		<Unit filename="SavEdit.cpp" />
+		<Unit filename="SavEdit.h" />
+		<Unit filename="SettingsEdit.cpp" />
+		<Unit filename="SettingsEdit.h" />
+		<Unit filename="wxStaticBitmapEx.cpp" />
+		<Unit filename="wxStaticBitmapEx.h" />
+		<Unit filename="wxWidgetsUserData.cpp" />
+		<Unit filename="wxWidgetsUserData.h" />
+		<Unit filename="wxsmith/CrittersEdit.wxs" />
+		<Unit filename="wxsmith/F12seFrame.wxs" />
+		<Unit filename="wxsmith/ItemEdit.wxs" />
+		<Unit filename="wxsmith/SavEdit.wxs" />
+		<Unit filename="wxsmith/SettingsEdit.wxs" />
+		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+			<lib_finder disable_auto="1" />
+			<wxsmith version="1">
+				<gui name="wxWidgets" src="F2seApp.cpp" main="F12seFrame" init_handlers="necessary" language="CPP" />
+				<resources>
+					<wxFrame wxs="wxsmith/F12seFrame.wxs" src="F2seMain.cpp" hdr="F2seMain.h" fwddecl="0" i18n="1" name="F12seFrame" language="CPP" />
+					<wxFrame wxs="wxsmith/SavEdit.wxs" src="SavEdit.cpp" hdr="SavEdit.h" fwddecl="0" i18n="1" name="SavEdit" language="CPP" />
+					<wxDialog wxs="wxsmith/SettingsEdit.wxs" src="SettingsEdit.cpp" hdr="SettingsEdit.h" fwddecl="0" i18n="1" name="SettingsEdit" language="CPP" />
+					<wxDialog wxs="wxsmith/ItemEdit.wxs" src="ItemEdit.cpp" hdr="ItemEdit.h" fwddecl="0" i18n="1" name="ItemEdit" language="CPP" />
+					<wxFrame wxs="wxsmith/CrittersEdit.wxs" src="CrittersEdit.cpp" hdr="CrittersEdit.h" fwddecl="0" i18n="1" name="CrittersEdit" language="CPP" />
+				</resources>
+			</wxsmith>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

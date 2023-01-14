@@ -1,0 +1,7 @@
+*.user
+*.log
+*.depend
+*.layout
+F2se/bin
+F2se/obj
+F2seTPL/wxWidgets
