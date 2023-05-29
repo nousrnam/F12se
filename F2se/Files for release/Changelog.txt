@@ -1,5 +1,11 @@
 ﻿YYYY-MM-DD
 
+2023-05-29
+-Some improvements for editing sfallgv.sav but they are not well tested.
+-Previous version triggered virustotal a lot, so now I use Visual Studio instead of TDM-GCC. It gives less warnings.
+-But using Visual Studio makes it difficult to support WinXP, so the editor no longer works in it.
+...Just use 2020-05-10 version or another editor: https://www.nexusmods.com/fallout2/mods/52
+
 2023-01-15
 -Added traits auto fix option.
 The game expects the player has the first trait slot set when trying to print the trait info on the character screen.

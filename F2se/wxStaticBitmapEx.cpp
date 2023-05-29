@@ -14,19 +14,12 @@ END_EVENT_TABLE()
 
 void wxStaticBitmapEx::OnPaint(wxPaintEvent&)
 {
-    // TODO WTF this function isn't called at all
     wxPaintDC dc(this);
-    /*dc.SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
-    dc.Clear();*/
+    PrepareDC(dc);
+    dc.SetBackground(GetBackgroundColour());
+    dc.Clear();
     if (bitmap.IsOk())
-        {
         dc.DrawBitmap(bitmap, 0, 0);
-        }
-    else
-        {
-        dc.SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
-        dc.Clear();
-        }
 }
 
 void wxStaticBitmapEx::ScaleImage()

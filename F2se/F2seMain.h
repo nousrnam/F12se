@@ -17,6 +17,7 @@
 #include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <wx/statbmp.h>
@@ -132,6 +133,8 @@ class F12seFrame: public wxFrame, public DataModelViewer
         void Localize(const Localization& l);
         void LoadWindowRect();
         void EditSelectedInventoryItem();
+        wxTreeItemId TryGetSelectedSfallArray(ArrayNew*& outArray, ArrayNew::KeyValPair*& outElement);
+        void RefreshSelectedSfallArrayTreeLabel(wxTreeItemId itemId, ArrayNew* arrayPtr, ArrayNew::KeyValPair* keyValPtr);
         //(*Handlers(F12seFrame)
         void OnQuit(wxCommandEvent& event);
         void OnlbSavesSelect(wxCommandEvent& event);
@@ -190,6 +193,9 @@ class F12seFrame: public wxFrame, public DataModelViewer
         void OnbtnResetGvarsClick(wxCommandEvent& event);
         void OnbtnResetEntrancesClick(wxCommandEvent& event);
         void OntItemsItemActivated(wxTreeEvent& event);
+        void OntSfallArraysSelectionChanged(wxTreeEvent& event);
+        void OnrbSfallArrTypeSelect(wxCommandEvent& event);
+        void OntxtSFallArrayNewValText(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(F12seFrame)
@@ -324,6 +330,10 @@ class F12seFrame: public wxFrame, public DataModelViewer
         static const long bSFallGvarDel;
         static const long lblValueSFallGvar;
         static const long ID_TEXTCTRL34;
+        static const long ID_TREECTRL2;
+        static const long ID_STATICTEXT1;
+        static const long ID_TEXTCTRL39;
+        static const long ID_RADIOBOX1;
         static const long ID_LISTBOX15;
         static const long ID_TEXTCTRL35;
         static const long ID_LISTBOX16;
@@ -434,6 +444,7 @@ class F12seFrame: public wxFrame, public DataModelViewer
         wxPanel* pnlSkillsPerks;
         wxPanel* pnlStats;
         wxPanel* pnlWorldmap;
+        wxRadioBox* rbSfallArrType;
         wxSplitterWindow* SplitterWindow1;
         wxStaticBitmap* sbItem;
         wxStaticBitmapEx* bmScreen;
@@ -476,6 +487,7 @@ class F12seFrame: public wxFrame, public DataModelViewer
         wxStaticText* StaticText7;
         wxStaticText* StaticText8;
         wxStaticText* StaticText9;
+        wxStaticText* lblSFallArrayVal;
         wxStaticText* lblSFallGvar;
         wxTextCtrl* txtBaseStatVal;
         wxTextCtrl* txtBonusStatVal;
@@ -502,6 +514,7 @@ class F12seFrame: public wxFrame, public DataModelViewer
         wxTextCtrl* txtQComplete;
         wxTextCtrl* txtQDisplay;
         wxTextCtrl* txtRadiation;
+        wxTextCtrl* txtSFallArrayNewVal;
         wxTextCtrl* txtSFallGvarVal;
         wxTextCtrl* txtSFallPerkDesc;
         wxTextCtrl* txtSFallSelPerkDesc;
@@ -515,6 +528,7 @@ class F12seFrame: public wxFrame, public DataModelViewer
         wxTextCtrl* txtXPos;
         wxTextCtrl* txtYPos;
         wxTreeCtrl* tItems;
+        wxTreeCtrl* tSfallArrays;
         //*)
         wxChoice* chTags[4];
         void OnOpen(wxCommandEvent& event);

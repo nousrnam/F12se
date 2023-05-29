@@ -50,13 +50,24 @@ wxMenu *wxTextCtrl::MSWCreateContextMenu()
 #endif
 
 class ItemTreeData : public wxTreeItemData
-    {
+{
 public:
     ItemTreeData(unsigned offset) : o(offset) {}
-    unsigned GetOffset() {return o;}
+    unsigned GetOffset() const {return o;}
 private:
     unsigned o;
-    };
+};
+
+class ArrayTreeData : public wxTreeItemData
+{
+public:
+    ArrayTreeData(unsigned arrayIdx, int elemIdx = -1) : a(arrayIdx), e(elemIdx) {}
+    unsigned GetArrayIdx() const {return a;}
+    int GetElemIdx() const {return e;}
+private:
+    unsigned a; /**< Index for SFallGV::arraysNew */
+    int e; /**< Index for SFallGV::arraysNew::data -1 if data for array and not an element */
+};
 
 //(*InternalHeaders(F12seFrame)
 #include <wx/intl.h>
@@ -195,6 +206,10 @@ const long F12seFrame::bSFallGvarAdd = wxNewId();
 const long F12seFrame::bSFallGvarDel = wxNewId();
 const long F12seFrame::lblValueSFallGvar = wxNewId();
 const long F12seFrame::ID_TEXTCTRL34 = wxNewId();
+const long F12seFrame::ID_TREECTRL2 = wxNewId();
+const long F12seFrame::ID_STATICTEXT1 = wxNewId();
+const long F12seFrame::ID_TEXTCTRL39 = wxNewId();
+const long F12seFrame::ID_RADIOBOX1 = wxNewId();
 const long F12seFrame::ID_LISTBOX15 = wxNewId();
 const long F12seFrame::ID_TEXTCTRL35 = wxNewId();
 const long F12seFrame::ID_LISTBOX16 = wxNewId();
@@ -374,6 +389,7 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     wxBoxSizer* BoxSizer3;
     wxBoxSizer* BoxSizer40;
     wxBoxSizer* BoxSizer41;
+    wxBoxSizer* BoxSizer42;
     wxBoxSizer* BoxSizer4;
     wxBoxSizer* BoxSizer5;
     wxBoxSizer* BoxSizer6;
@@ -394,6 +410,7 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     wxStaticBoxSizer* sbsPerks;
     wxStaticBoxSizer* sbsPlayer;
     wxStaticBoxSizer* sbsQuests;
+    wxStaticBoxSizer* sbsSFallArrays;
     wxStaticBoxSizer* sbsSFallGvars;
     wxStaticBoxSizer* sbsSFallPerks;
     wxStaticBoxSizer* sbsSFallSelectablePerks;
@@ -406,7 +423,7 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
     SetClientSize(wxSize(640,480));
     SplitterWindow1 = new wxSplitterWindow(this, ID_SPLITTERWINDOW1, wxDefaultPosition, wxDefaultSize, wxSP_3D, _T("ID_SPLITTERWINDOW1"));
-    SplitterWindow1->SetMinSize(wxSize(20,20));
+    SplitterWindow1->SetMinimumPaneSize(20);
     SplitterWindow1->SetSashGravity(0.8);
     pnlMain = new wxPanel(SplitterWindow1, ID_PANEL1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL1"));
     BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -453,17 +470,17 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     txtHour = new wxTextCtrl(pnlHeader, ID_TEXTCTRL6, wxEmptyString, wxDefaultPosition, wxSize(21,21), 0, wxDefaultValidator, _T("ID_TEXTCTRL6"));
     txtHour->SetMaxLength(2);
     BoxSizer9->Add(txtHour, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    StaticText5 = new wxStaticText(pnlHeader, lblHM, _(":"), wxDefaultPosition, wxDefaultSize, 0, _T("lblHM"));
+    StaticText5 = new wxStaticText(pnlHeader, lblHM, _T(":"), wxDefaultPosition, wxDefaultSize, 0, _T("lblHM"));
     BoxSizer9->Add(StaticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0);
     txtMinute = new wxTextCtrl(pnlHeader, ID_TEXTCTRL7, wxEmptyString, wxDefaultPosition, wxSize(21,21), 0, wxDefaultValidator, _T("ID_TEXTCTRL7"));
     txtMinute->SetMaxLength(2);
     BoxSizer9->Add(txtMinute, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    StaticText6 = new wxStaticText(pnlHeader, lblMS, _(":"), wxDefaultPosition, wxDefaultSize, 0, _T("lblMS"));
+    StaticText6 = new wxStaticText(pnlHeader, lblMS, _T(":"), wxDefaultPosition, wxDefaultSize, 0, _T("lblMS"));
     BoxSizer9->Add(StaticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0);
     txtSecond = new wxTextCtrl(pnlHeader, ID_TEXTCTRL8, wxEmptyString, wxDefaultPosition, wxSize(21,21), 0, wxDefaultValidator, _T("ID_TEXTCTRL8"));
     txtSecond->SetMaxLength(2);
     BoxSizer9->Add(txtSecond, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    StaticText7 = new wxStaticText(pnlHeader, lblST, _("."), wxDefaultPosition, wxDefaultSize, 0, _T("lblST"));
+    StaticText7 = new wxStaticText(pnlHeader, lblST, _T("."), wxDefaultPosition, wxDefaultSize, 0, _T("lblST"));
     BoxSizer9->Add(StaticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0);
     txtTick = new wxTextCtrl(pnlHeader, ID_TEXTCTRL9, wxEmptyString, wxDefaultPosition, wxSize(21,21), 0, wxDefaultValidator, _T("ID_TEXTCTRL9"));
     txtTick->SetMaxLength(1);
@@ -478,8 +495,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     bmScreen = new wxStaticBitmapEx(pnlHeader,ID_CUSTOM2,wxDefaultPosition,wxDefaultSize,00,_T("ID_CUSTOM2"));
     BoxSizer4->Add(bmScreen, 1, wxALL|wxEXPAND, 5);
     pnlHeader->SetSizer(BoxSizer4);
-    BoxSizer4->Fit(pnlHeader);
-    BoxSizer4->SetSizeHints(pnlHeader);
     pnlGVARs = new wxPanel(Notebook1, ID_PANEL4, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL4"));
     BoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer11 = new wxBoxSizer(wxVERTICAL);
@@ -535,8 +550,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer12->Add(sbsQuests, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 1);
     BoxSizer10->Add(BoxSizer12, 0, wxEXPAND, 5);
     pnlGVARs->SetSizer(BoxSizer10);
-    BoxSizer10->Fit(pnlGVARs);
-    BoxSizer10->SetSizeHints(pnlGVARs);
     pnlWorldmap = new wxPanel(Notebook1, ID_PANEL7, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL7"));
     BoxSizer18 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer19 = new wxBoxSizer(wxVERTICAL);
@@ -598,8 +611,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer21->Add(sbsWorldmapState, 0, wxEXPAND, 5);
     BoxSizer18->Add(BoxSizer21, 0, wxEXPAND, 5);
     pnlWorldmap->SetSizer(BoxSizer18);
-    BoxSizer18->Fit(pnlWorldmap);
-    BoxSizer18->SetSizeHints(pnlWorldmap);
     pnlInventory = new wxPanel(Notebook1, ID_PANEL6, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL6"));
     BoxSizer22 = new wxBoxSizer(wxHORIZONTAL);
     tItems = new wxTreeCtrl(pnlInventory, ID_TREECTRL1, wxDefaultPosition, wxDefaultSize, wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL1"));
@@ -619,8 +630,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer23->Add(sbItem, 0, wxALL|wxALIGN_LEFT, 5);
     BoxSizer22->Add(BoxSizer23, 0, wxALL|wxEXPAND, 5);
     pnlInventory->SetSizer(BoxSizer22);
-    BoxSizer22->Fit(pnlInventory);
-    BoxSizer22->SetSizeHints(pnlInventory);
     pnlStats = new wxPanel(Notebook1, ID_PANEL5, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL5"));
     BoxSizer15 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer16 = new wxBoxSizer(wxVERTICAL);
@@ -648,8 +657,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer17->Add(BoxSizer33, 0, wxALIGN_LEFT, 5);
     BoxSizer15->Add(BoxSizer17, 1, wxEXPAND, 5);
     pnlStats->SetSizer(BoxSizer15);
-    BoxSizer15->Fit(pnlStats);
-    BoxSizer15->SetSizeHints(pnlStats);
     pnlSkillsPerks = new wxPanel(Notebook1, ID_PANEL10, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL10"));
     BoxSizer24 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer25 = new wxBoxSizer(wxVERTICAL);
@@ -688,8 +695,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     sbsPerks->Add(BoxSizer26, 0, wxALIGN_LEFT, 5);
     BoxSizer24->Add(sbsPerks, 1, wxEXPAND, 5);
     pnlSkillsPerks->SetSizer(BoxSizer24);
-    BoxSizer24->Fit(pnlSkillsPerks);
-    BoxSizer24->SetSizeHints(pnlSkillsPerks);
     pnlMisc = new wxPanel(Notebook1, ID_PANEL8, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL8"));
     BoxSizer28 = new wxBoxSizer(wxHORIZONTAL);
     sbsKills = new wxStaticBoxSizer(wxVERTICAL, pnlMisc, _("Kills"));
@@ -801,8 +806,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer29->Add(sbsGameReset, 0, wxEXPAND, 5);
     BoxSizer28->Add(BoxSizer29, 0, wxLEFT|wxEXPAND, 5);
     pnlMisc->SetSizer(BoxSizer28);
-    BoxSizer28->Fit(pnlMisc);
-    BoxSizer28->SetSizeHints(pnlMisc);
     pnlSFall = new wxPanel(Notebook1, ID_PANEL11, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL11"));
     BoxSizer39 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer40 = new wxBoxSizer(wxVERTICAL);
@@ -822,7 +825,26 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     BoxSizer41->Add(txtSFallGvarVal, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     sbsSFallGvars->Add(BoxSizer41, 0, wxALL|wxEXPAND, 5);
     BoxSizer40->Add(sbsSFallGvars, 1, wxALL|wxEXPAND, 5);
-    BoxSizer39->Add(BoxSizer40, 1, wxALL|wxEXPAND, 5);
+    BoxSizer39->Add(BoxSizer40, 1, wxALL|wxEXPAND, 0);
+    sbsSFallArrays = new wxStaticBoxSizer(wxVERTICAL, pnlSFall, _("Arrays"));
+    tSfallArrays = new wxTreeCtrl(pnlSFall, ID_TREECTRL2, wxDefaultPosition, wxDefaultSize, wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE, wxDefaultValidator, _T("ID_TREECTRL2"));
+    sbsSFallArrays->Add(tSfallArrays, 5, wxALL|wxEXPAND, 5);
+    BoxSizer42 = new wxBoxSizer(wxHORIZONTAL);
+    lblSFallArrayVal = new wxStaticText(pnlSFall, ID_STATICTEXT1, _("Value"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
+    BoxSizer42->Add(lblSFallArrayVal, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    txtSFallArrayNewVal = new wxTextCtrl(pnlSFall, ID_TEXTCTRL39, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL39"));
+    BoxSizer42->Add(txtSFallArrayNewVal, 1, wxALL, 5);
+    sbsSFallArrays->Add(BoxSizer42, 0, wxALL|wxEXPAND, 5);
+    wxString __wxRadioBoxChoices_1[4] =
+    {
+        _("NONE"),
+        _("INT"),
+        _("FLOAT"),
+        _("STR")
+    };
+    rbSfallArrType = new wxRadioBox(pnlSFall, ID_RADIOBOX1, _("Type"), wxDefaultPosition, wxDefaultSize, 4, __wxRadioBoxChoices_1, 1, wxRA_SPECIFY_ROWS, wxDefaultValidator, _T("ID_RADIOBOX1"));
+    sbsSFallArrays->Add(rbSfallArrType, 0, wxALL|wxEXPAND, 5);
+    BoxSizer39->Add(sbsSFallArrays, 1, wxALL|wxEXPAND, 5);
     sbsSFallTraits = new wxStaticBoxSizer(wxVERTICAL, pnlSFall, _("Traits"));
     lbSFallTraits = new wxListBox(pnlSFall, ID_LISTBOX15, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_LISTBOX15"));
     sbsSFallTraits->Add(lbSFallTraits, 5, wxALL|wxEXPAND, 5);
@@ -842,8 +864,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     sbsSFallSelectablePerks->Add(txtSFallSelPerkDesc, 1, wxALL|wxEXPAND, 5);
     BoxSizer39->Add(sbsSFallSelectablePerks, 1, wxALL|wxEXPAND, 5);
     pnlSFall->SetSizer(BoxSizer39);
-    BoxSizer39->Fit(pnlSFall);
-    BoxSizer39->SetSizeHints(pnlSFall);
     pnlHex = new wxPanel(Notebook1, ID_PANEL9, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL9"));
     BoxSizer14 = new wxBoxSizer(wxHORIZONTAL);
     BoxSizer34 = new wxBoxSizer(wxVERTICAL);
@@ -854,8 +874,6 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     hexEditor = new SimpleHexEditCtrlWX(pnlHex,ID_CUSTOM1,wxDefaultPosition,wxSize(220,389),00,_T("ID_CUSTOM1"));
     BoxSizer14->Add(hexEditor, 1, wxEXPAND, 0);
     pnlHex->SetSizer(BoxSizer14);
-    BoxSizer14->Fit(pnlHex);
-    BoxSizer14->SetSizeHints(pnlHex);
     Notebook1->AddPage(pnlHeader, _("Header"), false);
     Notebook1->AddPage(pnlGVARs, _("GVARs"), false);
     Notebook1->AddPage(pnlWorldmap, _("World map"), false);
@@ -867,15 +885,11 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     Notebook1->AddPage(pnlHex, _("HEXview"), false);
     BoxSizer2->Add(Notebook1, 1, wxALL|wxEXPAND, 5);
     pnlMain->SetSizer(BoxSizer2);
-    BoxSizer2->Fit(pnlMain);
-    BoxSizer2->SetSizeHints(pnlMain);
     pnlLog = new wxPanel(SplitterWindow1, ID_PANEL2, wxDefaultPosition, wxDefaultSize, 0, _T("ID_PANEL2"));
     BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
     txtLog = new wxTextCtrl(pnlLog, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY, wxDefaultValidator, _T("ID_TEXTCTRL1"));
     BoxSizer1->Add(txtLog, 1, wxALL|wxEXPAND, 5);
     pnlLog->SetSizer(BoxSizer1);
-    BoxSizer1->Fit(pnlLog);
-    BoxSizer1->SetSizeHints(pnlLog);
     SplitterWindow1->SplitHorizontally(pnlMain, pnlLog);
     SplitterWindow1->SetSashPosition(600);
     mbMain = new wxMenuBar();
@@ -989,6 +1003,9 @@ F12seFrame::F12seFrame(wxWindow* parent,wxWindowID id) : flog(NULL), numberOfTil
     Connect(bSFallGvarAdd,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&F12seFrame::OnbtnSFallGvarAddClick);
     Connect(bSFallGvarDel,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&F12seFrame::OnbtnSFallGvarDelClick);
     Connect(ID_TEXTCTRL34,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&F12seFrame::OntxtSFallGvarValText);
+    Connect(ID_TREECTRL2,wxEVT_COMMAND_TREE_SEL_CHANGED,(wxObjectEventFunction)&F12seFrame::OntSfallArraysSelectionChanged);
+    Connect(ID_TEXTCTRL39,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&F12seFrame::OntxtSFallArrayNewValText);
+    Connect(ID_RADIOBOX1,wxEVT_COMMAND_RADIOBOX_SELECTED,(wxObjectEventFunction)&F12seFrame::OnrbSfallArrTypeSelect);
     Connect(ID_LISTBOX15,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&F12seFrame::OnlbSFallTraitsSelect);
     Connect(ID_LISTBOX16,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&F12seFrame::OnlbSFallPerksSelect);
     Connect(ID_LISTBOX17,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&F12seFrame::OnlbSFallSelPerksSelect);
@@ -1324,7 +1341,7 @@ void LoadContainer(size_t &curOffset, int32 itemsCount, wxTreeCtrl *tree, wxTree
             return;
         wxString itemName = datamodel.GetItemNameInCurSave(curOffset);
         wxTreeItemId parentItemId = tree->AppendItem(parent, itemName, curOffset);
-        tree->SetItemData(parentItemId, new ItemTreeData(curOffset));
+        tree->SetItemData(parentItemId, new ItemTreeData(curOffset)); // TODO check if leak
         //проверка предмета на контейнерность
         if (itemType == ITMT_CONTAINER)
             {
@@ -1682,8 +1699,26 @@ void FillListBoxWithFakePerks(wxListBox* lb, const SFallGV::FakePerks& fakes)
         }
     }
 
-void F12seFrame::AfterLoadSaveDat()
+static wxString GetLabelForSfallArrayElem(const ArrayNew* ar, const ArrayNew::KeyValPair* kv = NULL)
+{
+    wxString ret;
+    if (kv)
     {
+        std::string str = kv->first.GetString() + '=' + kv->second.GetString();
+        ret = wxString::From8BitData(str.data(), str.size());
+    }
+    else if (ar)
+    {
+        std::string key = ar->key.GetString();
+        ret = wxString::From8BitData(key.data(), key.size());
+    }
+    else
+        ret = "NULL PTR BUG";
+    return ret;
+}
+
+void F12seFrame::AfterLoadSaveDat()
+{
     SetTitle(TITLE_BEGIN + datamodel.curSave.GetPath());
     btnSave->Enable();
     mSave->Enable();
@@ -1694,31 +1729,50 @@ void F12seFrame::AfterLoadSaveDat()
     std::string sfallgvpath = datamodel.curSave.GetDir() + DIR_SEPARATOR SFALLGVSAV;
     const bool sfallgvExist = FileExists(sfallgvpath);
     if (sfallgvExist)
-        {
+    {
         try
-            {
+        {
             sfallgv.Load(sfallgvpath);
-            }
+        }
         catch (std::exception& e)
-            {
+        {
             ntst_log_error(std::string("sfallgv.sav loading failed. Exception: ") + e.what());
             sfallgv.Clear();
-            }
         }
+    }
     else
         sfallgv.Clear();
+    btnSaveSFallgv->Enable(sfallgv.mIsValid);
     lbSFallGVar->Clear();
     for (SFallGV::GlobalVars::const_iterator it = sfallgv.globalVars.begin(); it != sfallgv.globalVars.end(); ++it)
-        {
+    {
         lbSFallGVar->Append(it->GetString());
-        }
+    }
     FillListBoxWithFakePerks(lbSFallTraits, sfallgv.fakeTraits);
     txtSFallTraitDesc->Clear();
     FillListBoxWithFakePerks(lbSFallPerks, sfallgv.fakePerks);
     txtSFallPerkDesc->Clear();
     FillListBoxWithFakePerks(lbSFallSelPerks, sfallgv.fakeSelectablePerks);
     txtSFallSelPerkDesc->Clear();
+    tSfallArrays->UnselectAll(); // otherwise DeleteAllItems selects items
+    tSfallArrays->DeleteAllItems();
+    wxTreeItemId rootId = tSfallArrays->AddRoot("dummy");
+    for (size_t i = 0; i < sfallgv.arraysNew.size(); ++i)
+    {
+        ArrayNew& ar = sfallgv.arraysNew[i];
+        wxString label = GetLabelForSfallArrayElem(&ar);
+        wxTreeItemId arrayId = tSfallArrays->AppendItem(rootId, label);
+        tSfallArrays->SetItemData(arrayId, new ArrayTreeData(i)); // TODO check if leak
+        for (size_t j = 0; j < ar.data.size(); ++j)
+        {
+            const ArrayNew::KeyValPair& kv = ar.data[j];
+            std::string str = kv.first.GetString() + '=' + kv.second.GetString();
+            label = GetLabelForSfallArrayElem(&ar, &kv);
+            wxTreeItemId elemId = tSfallArrays->AppendItem(arrayId, label);
+            tSfallArrays->SetItemData(elemId, new ArrayTreeData(i, j)); // TODO check if leak
+        }
     }
+}
 
 void F12seFrame::OnlbSavesSelect(wxCommandEvent&)
     {
@@ -2788,3 +2842,112 @@ void F12seFrame::OnbtnResetEntrancesClick(wxCommandEvent& /*event*/)
             }
         }
     }
+
+/**
+ * @brief Returns selected array and element.
+ * If only array selected, element == NULL
+ * If nothing selected, array == NULL and element == NULL
+ * @param outArray
+ * @param outKeyVal
+ */
+wxTreeItemId F12seFrame::TryGetSelectedSfallArray(ArrayNew*& outArray, ArrayNew::KeyValPair*& outKeyVal)
+{
+    outArray = NULL;
+    outKeyVal = NULL;
+    wxTreeItemId itemId = tSfallArrays->GetSelection();
+    if (!itemId.IsOk())
+        return itemId;
+    ArrayTreeData* dataPtr = (ArrayTreeData*)tSfallArrays->GetItemData(itemId);
+    if (dataPtr)
+    {
+        const unsigned ai = dataPtr->GetArrayIdx();
+        if (ai < sfallgv.arraysNew.size())
+        {
+            outArray = &sfallgv.arraysNew[ai];
+            const unsigned ei = dataPtr->GetElemIdx();
+            if (ei < outArray->data.size())
+                outKeyVal = &outArray->data[ei];
+        }
+    }
+    return itemId;
+}
+
+void F12seFrame::RefreshSelectedSfallArrayTreeLabel(wxTreeItemId itemId, ArrayNew* arrayPtr, ArrayNew::KeyValPair* keyValPtr)
+{
+    wxString label = GetLabelForSfallArrayElem(arrayPtr, keyValPtr);
+    tSfallArrays->SetItemText(itemId, label);
+}
+
+void F12seFrame::OntSfallArraysSelectionChanged(wxTreeEvent&)
+{
+    ArrayNew* arrayPtr;
+    ArrayNew::KeyValPair* keyValPtr;
+    TryGetSelectedSfallArray(arrayPtr, keyValPtr);
+    if (!arrayPtr)
+        return;
+    ArrayVarNew* val;
+    if (keyValPtr)
+        val = &keyValPtr->second; // element selected
+    else
+        val = &arrayPtr->key; // array selected
+    const int sel = (val->type < rbSfallArrType->GetCount()) ? val->type : -1;
+    rbSfallArrType->SetSelection(sel);
+    txtSFallArrayNewVal->SetLabel(val->GetString());
+}
+
+void F12seFrame::OnrbSfallArrTypeSelect(wxCommandEvent&)
+{
+    ArrayNew* arrayPtr;
+    ArrayNew::KeyValPair* keyValPtr;
+    const wxTreeItemId itemId = TryGetSelectedSfallArray(arrayPtr, keyValPtr);
+    if (!arrayPtr)
+        return;
+    ArrayVarNew* val;
+    if (keyValPtr)
+        val = &keyValPtr->second; // element selected
+    else
+        val = &arrayPtr->key; // array selected
+    const unsigned selIdx = rbSfallArrType->GetSelection();
+    if (selIdx < SFDT_END)
+    {
+        val->SetType((SFallDataType)selIdx);
+        RefreshSelectedSfallArrayTreeLabel(itemId, arrayPtr, keyValPtr);
+    }
+}
+
+void F12seFrame::OntxtSFallArrayNewValText(wxCommandEvent& event)
+{
+    ArrayNew* arrayPtr;
+    ArrayNew::KeyValPair* keyValPtr;
+    const wxTreeItemId itemId = TryGetSelectedSfallArray(arrayPtr, keyValPtr);
+    if (!arrayPtr)
+        return;
+    ArrayVarNew* val;
+    if (keyValPtr)
+        val = &keyValPtr->second; // element selected
+    else
+        val = &arrayPtr->key; // array selected
+    switch (val->type)
+    {
+    case SFDT_INT:
+    {
+        int32 valI;
+        if (wxTextToInt(valI, txtSFallArrayNewVal))
+            val->SetInt(valI);
+        break;
+    }
+    case SFDT_FLOAT:
+    {
+        double valD;
+        if (txtSFallArrayNewVal->GetValue().ToDouble(&valD))
+            val->SetFloat(valD);
+        break;
+    }
+    case SFDT_STR:
+        val->SetString(WxStringToStdLocal(txtSFallArrayNewVal->GetValue()));
+        break;
+    default:
+        return;
+    }
+    RefreshSelectedSfallArrayTreeLabel(itemId, arrayPtr, keyValPtr);
+}

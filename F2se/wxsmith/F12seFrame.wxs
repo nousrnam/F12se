@@ -6,7 +6,7 @@
 		<object class="wxSplitterWindow" name="ID_SPLITTERWINDOW1" variable="SplitterWindow1" member="yes">
 			<sashpos>600</sashpos>
 			<sashgravity>0.800000</sashgravity>
-			<minsize>20,20</minsize>
+			<minsize>20</minsize>
 			<object class="wxPanel" name="ID_PANEL1" variable="pnlMain" member="yes">
 				<style>0</style>
 				<object class="wxBoxSizer" variable="BoxSizer2" member="no">
@@ -705,9 +705,7 @@
 													<border>5</border>
 												</object>
 												<object class="sizeritem">
-													<object class="wxStaticBitmap" name="ID_STATICBITMAP2" variable="sbItem" member="yes">
-														<style>0</style>
-													</object>
+													<object class="wxStaticBitmap" name="ID_STATICBITMAP2" variable="sbItem" member="yes" />
 													<flag>wxALL|wxALIGN_LEFT</flag>
 													<border>5</border>
 												</object>
@@ -1393,6 +1391,69 @@
 													<flag>wxALL|wxEXPAND</flag>
 													<border>5</border>
 													<option>1</option>
+												</object>
+											</object>
+											<flag>wxALL|wxEXPAND</flag>
+											<option>1</option>
+										</object>
+										<object class="sizeritem">
+											<object class="wxStaticBoxSizer" variable="sbsSFallArrays" member="no">
+												<label>Arrays</label>
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<object class="wxTreeCtrl" name="ID_TREECTRL2" variable="tSfallArrays" member="yes">
+														<image_list>&lt;none&gt;</image_list>
+														<tree_items>
+															<item>tSfallArrays</item>
+															<item>&lt;none&gt;</item>
+														</tree_items>
+														<items_text>
+															<item2>tSfallArrays</item2>
+															<item2>&lt;none&gt;</item2>
+														</items_text>
+														<style>wxTR_LINES_AT_ROOT|wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE</style>
+														<handler function="OntSfallArraysSelectionChanged" entry="EVT_TREE_SEL_CHANGED" />
+													</object>
+													<flag>wxALL|wxEXPAND</flag>
+													<border>5</border>
+													<option>5</option>
+												</object>
+												<object class="sizeritem">
+													<object class="wxBoxSizer" variable="BoxSizer42" member="no">
+														<object class="sizeritem">
+															<object class="wxStaticText" name="ID_STATICTEXT1" variable="lblSFallArrayVal" member="yes">
+																<label>Value</label>
+															</object>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+															<border>5</border>
+														</object>
+														<object class="sizeritem">
+															<object class="wxTextCtrl" name="ID_TEXTCTRL39" variable="txtSFallArrayNewVal" member="yes">
+																<handler function="OntxtSFallArrayNewValText" entry="EVT_TEXT" />
+															</object>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<option>1</option>
+														</object>
+													</object>
+													<flag>wxALL|wxEXPAND</flag>
+													<border>5</border>
+												</object>
+												<object class="sizeritem">
+													<object class="wxRadioBox" name="ID_RADIOBOX1" variable="rbSfallArrType" member="yes">
+														<label>Type</label>
+														<content>
+															<item>NONE</item>
+															<item>INT</item>
+															<item>FLOAT</item>
+															<item>STR</item>
+														</content>
+														<default>-1</default>
+														<style>wxRA_SPECIFY_ROWS</style>
+														<handler function="OnrbSfallArrTypeSelect" entry="EVT_RADIOBOX" />
+													</object>
+													<flag>wxALL|wxEXPAND</flag>
+													<border>5</border>
 												</object>
 											</object>
 											<flag>wxALL|wxEXPAND</flag>

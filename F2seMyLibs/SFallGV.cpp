@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "SFallGV.h"
-#include "ntst_loggingpp.hpp"
 
 unsigned Int64GetTextLen(int64 val)
     {
@@ -33,15 +32,18 @@ std::string GlobalVar::GetName() const
     }
 
 template<class T>
-void SaveVector(FILE* f, const std::vector<T>& vec)
-    {
+bool SaveVector(FILE* f, const std::vector<T>& vec)
+{
     uint32 elementCount = vec.size();
-    fwrite(&elementCount, sizeof(elementCount), 1, f);
+    if (fwrite(&elementCount, sizeof(elementCount), 1, f) != 1)
+        return false;
     for (typename std::vector<T>::const_iterator it = vec.begin(); it != vec.end(); ++it)
-        {
-        fwrite(&(*it), sizeof(*it), 1, f);
-        }
+    {
+        if (fwrite(&(*it), sizeof(*it), 1, f) != 1)
+            return false;
     }
+    return true;
+}
 
 template<class T>
 bool LoadVector(FILE* f, std::vector<T>& vec)
@@ -61,16 +63,20 @@ bool LoadVector(FILE* f, std::vector<T>& vec)
     return true;
     }
 
-void SaveGlobalVars(FILE* f, const SFallGV::GlobalVars& vec)
-    {
+static bool SaveGlobalVars(FILE* f, const SFallGV::GlobalVars& vec)
+{
     uint32 elementCount = vec.size();
-    fwrite(&elementCount, sizeof(elementCount), 1, f);
+    if (fwrite(&elementCount, sizeof(elementCount), 1, f) != 1)
+        return false;
     for (SFallGV::GlobalVars::const_iterator it = vec.begin(); it != vec.end(); ++it)
-        {
-        fwrite(&it->id, sizeof(it->id), 1, f);
-        fwrite(&it->paddedVal.valWithPadding, sizeof(it->paddedVal.valWithPadding), 1, f);
-        }
+    {
+        if (fwrite(&it->id, sizeof(it->id), 1, f) != 1)
+            return false;
+        if (fwrite(&it->paddedVal.valWithPadding, sizeof(it->paddedVal.valWithPadding), 1, f) != 1)
+            return false;
     }
+    return true;
+}
 
 bool LoadGlobalVars(FILE* f, SFallGV::GlobalVars& vec)
     {
@@ -91,43 +97,82 @@ bool LoadGlobalVars(FILE* f, SFallGV::GlobalVars& vec)
     }
 
 void SFallGV::Save(const std::string& path) const
+{
+    const std::string filepathBackup = path + ".backup";
+    remove(filepathBackup.c_str());
+    if (rename(path.c_str(), filepathBackup.c_str()) != 0)
     {
+        ntst_log_error("Can't rename original file \"" + path + "\" to \"" + filepathBackup + "\" error: " + strerror(errno));
+        return;
+    }
     FILE* f = fopen(path.c_str(), "wb");
     if (f == NULL)
-        {
-        ntst_log_error("Can't open file: " + path);
+    {
+        ntst_log_error("Can't open file: \"" + path + "\" error: " + strerror(errno));
         return;
-        }
-    // Global variables
-    SaveGlobalVars(f, globalVars);
-    // Unused
-    fwrite(&unused, sizeof(int32), 1, f);
-    // GainStatFix
-    fwrite(&gainStatFix, sizeof(gainStatFix), 1, f);
-    // Perks
-    SaveVector(f, fakeTraits);
-    SaveVector(f, fakePerks);
-    SaveVector(f, fakeSelectablePerks);
-    // Arrays
-    uint32 arraysCount = arrays.size();
-    fwrite(&arraysCount, sizeof(arraysCount), 1, f);
-    for (std::vector<ArrayVar>::const_iterator it = arrays.begin(); it != arrays.end(); ++it)
-        {
-        const ArrayVar& var = *it;
-        fwrite(&var.id, sizeof(var.id), 1, f);
-        uint32 typessize = var.types.size();
-        fwrite(&typessize, sizeof(typessize), 1, f);
-        uint32 datasize;
-        if (typessize != 0)
-            datasize = var.data.size() / typessize;
-        else
-            datasize = 0;
-        fwrite(&datasize, sizeof(datasize), 1, f);
-        fwrite(var.types.data(), 4, typessize, f);
-        fwrite(var.data.data(), 1, var.data.size(), f);
-        }
-    fclose(f);
     }
+    // Global variables
+    bool ok = SaveGlobalVars(f, globalVars);
+    // Unused
+    ok = ok && (fwrite(&unused, sizeof(int32), 1, f) == 1);
+    // GainStatFix
+    ok = ok && (fwrite(&gainStatFix, sizeof(gainStatFix), 1, f) == 1);
+    // Perks
+    ok = ok && SaveVector(f, fakeTraits);
+    ok = ok && SaveVector(f, fakePerks);
+    ok = ok && SaveVector(f, fakeSelectablePerks);
+    // Arrays Old
+    uint32 arraysCountOld = arraysOld.size();
+    ok = ok && (fwrite(&arraysCountOld, sizeof(arraysCountOld), 1, f) == 1);
+    for (std::vector<ArrayVarOld>::const_iterator it = arraysOld.begin(); it != arraysOld.end(); ++it)
+    {
+        const ArrayVarOld& var = *it;
+        ok = ok && (fwrite(&var.id, sizeof(var.id), 1, f) == 1);
+        uint32 typessize = var.types.size();
+        ok = ok && (fwrite(&typessize, sizeof(typessize), 1, f) == 1);
+        ok = ok && (fwrite(&var.dataSize, sizeof(var.dataSize), 1, f) == 1);
+        const size_t ret = fwrite(var.types.data(), sizeof(uint32), typessize, f);
+        ok = ok && (ret == typessize);
+        ok = ok && (fwrite(var.data.data(), 1, var.data.size(), f) == var.data.size());
+    }
+    // Arrays New
+    uint32 arraysCountNew = arraysNew.size();
+    ok = ok && (fwrite(&arraysCountNew, sizeof(arraysCountNew), 1, f) == 1);
+    for (std::vector<ArrayNew>::const_iterator it = arraysNew.begin(); it != arraysNew.end(); ++it)
+    {
+        ok = ok && it->Save(f);
+    }
+    // BugFixes::DrugsSaveFix
+    uint32 drugPidCount = drugFixes.size();
+    if (drugPidCount > 0)
+    {
+        ok = ok && (fwrite(&drugPidCount, sizeof(drugPidCount), 1, f) == 1);
+        for (uint32 i = 0; i < drugPidCount; ++i)
+        {
+            const uint32 pid = drugFixes[i];
+            ok = ok && (fwrite(&pid, sizeof(pid), 1, f) == 1);
+        }
+    }
+    fclose(f);
+    if (ok)
+    { // Deleting backup
+        if (remove(filepathBackup.c_str()) != 0)
+        {
+            const std::string strerr = strerror(errno);
+            ntst_log_warning("Can't delete backup file \"" + filepathBackup + "\" error: " + strerr);
+        }
+        ntst_log_info(path + " succesfully saved.");
+    }
+    else
+    { // Restoring backup
+        ntst_log_warning("Can't save file somehow. Restoring backup.");
+        remove(path.c_str()); // rename may fail if new name already exist.
+        if (rename(filepathBackup.c_str(), path.c_str()) != 0)
+        {
+            ntst_log_error("Can't restore original file from \"" + filepathBackup + "\" error: " + strerror(errno));
+        }
+    }
+}
 
 void SFallGV::Clear()
     {
@@ -136,97 +181,130 @@ void SFallGV::Clear()
     fakeTraits.clear();
     fakePerks.clear();
     fakeSelectablePerks.clear();
-    arrays.clear();
+    arraysOld.clear();
+    arraysNew.clear();
+    drugFixes.clear();
+    mIsValid = false;
     }
 
 void SFallGV::Load(const std::string& path)
-    {
+{
     Clear();
     FILE* f = fopen(path.c_str(), "rb");
     if (f == NULL)
-        {
+    {
         ntst_log_error("Can't open file: " + path);
         return;
-        }
-    ArrayVar var;
-    bool allRead = false;
+    }
+    ArrayVarOld var;
     // Global variables
-    if (!LoadGlobalVars(f, globalVars))
+    bool ok = LoadGlobalVars(f, globalVars);
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv loaded global variables = " + ntst::to_string(globalVars.size()));
     // Unused
-    if (fread(&unused, sizeof(unused), 1, f) != 1)
+    ok = fread(&unused, sizeof(unused), 1, f) == 1;
+    if (!ok)
         goto QUIT_LOAD;
     // GainStatFix
-    if (fread(&gainStatFix, sizeof(gainStatFix), 1, f) != 1)
+    ok = fread(&gainStatFix, sizeof(gainStatFix), 1, f) == 1;
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv GainStatFix = " + ntst::to_string(gainStatFix));
     // Perks
-    if (!LoadVector(f, fakeTraits))
+    ok = LoadVector(f, fakeTraits);
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv loaded fake traits = " + ntst::to_string(fakeTraits.size()));
-    if (!LoadVector(f, fakePerks))
+    ok = LoadVector(f, fakePerks);
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv loaded fake perks = " + ntst::to_string(fakePerks.size()));
-    if (!LoadVector(f, fakeSelectablePerks))
+    ok = LoadVector(f, fakeSelectablePerks);
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv loaded fake selectable perks = " + ntst::to_string(fakeSelectablePerks.size()));
     // Arrays
     uint32 arraysCount;
-    if (fread(&arraysCount, sizeof(arraysCount), 1, f) != 1)
+    ok = fread(&arraysCount, sizeof(arraysCount), 1, f) == 1;
+    if (!ok)
         goto QUIT_LOAD;
     ntst_log_info("sfallgv arrays count(old format) = " + ntst::to_string(arraysCount));
     for (uint32 i = 0; i < arraysCount; ++i)
-        {
-        if (fread(&var.id, sizeof(var.id), 1, f) != 1)
+    {
+        ok = fread(&var.id, sizeof(var.id), 1, f) == 1;
+        if (!ok)
             goto QUIT_LOAD;
         uint32 typessize;
-        if (fread(&typessize, sizeof(typessize), 1, f) != 1)
+        ok = fread(&typessize, sizeof(typessize), 1, f) == 1;
+        if (!ok)
             goto QUIT_LOAD;
-        uint32 datasize;
-        if (fread(&datasize, sizeof(datasize), 1, f) != 1)
+        ok = fread(&var.dataSize, sizeof(var.dataSize), 1, f) == 1;
+        if (!ok)
             goto QUIT_LOAD;
-        var.types.reserve(typessize);
         for (uint32 j = 0; j < typessize; ++j)
-            {
+        {
             uint32 type;
-            if (fread(&type, sizeof(type), 1, f) != 1)
+            ok = fread(&type, sizeof(type), 1, f) == 1;
+            if (!ok)
                 goto QUIT_LOAD;
             var.types.push_back(type);
-            }
-        uint32 datafullsize = typessize * datasize;
-        var.data.reserve(datafullsize);
+        }
+        uint32 datafullsize = typessize * var.dataSize;
         for (uint32 j = 0; j < datafullsize; ++j)
-            {
+        {
             char data;
-            if (fread(&data, sizeof(data), 1, f) != 1)
+            ok = fread(&data, sizeof(data), 1, f) == 1;
+            if (!ok)
                 goto QUIT_LOAD;
             var.data.push_back(data);
-            }
-        arrays.push_back(var);
+        }
+        arraysOld.push_back(var);
         var.types.clear();
         var.data.clear();
-        }
+    }
     if (arraysCount != 0)
-        ntst_log_info("sfallgv loaded arrays(old format) = " + ntst::to_string(arrays.size()));
+        ntst_log_info("sfallgv loaded arrays(old format) = " + ntst::to_string(arraysOld.size()));
+    // Arrays new
     uint32 newArraysCount;
-    if (fread(&newArraysCount, sizeof(newArraysCount), 1, f) == 1)
-        {
-        ntst_log_info("sfallgv arrays count(new format) = " + ntst::to_string(newArraysCount));
-        if (newArraysCount != 0)
-            {
-            ntst_log_warning("sfallgv.sav has new format arrays, they are unsupported by editor! Do not change this file from editor!");
+    ok = fread(&newArraysCount, sizeof(newArraysCount), 1, f) == 1;
+    if (!ok)
+    {
+        ok = feof(f);
+        goto QUIT_LOAD;
+    }
+    ntst_log_info("sfallgv arrays count(new format) = " + ntst::to_string(newArraysCount));
+    for (uint32 i = 0; i < newArraysCount; ++i)
+    {
+        ArrayNew arr(f, ok);
+        if (!ok)
             goto QUIT_LOAD;
-            }
-        }
-    allRead = true;
+        arraysNew.push_back(arr);
+    }
+    // BugFixes::DrugsSaveFix
+    uint32 drugPidCount;
+    ok = fread(&drugPidCount, sizeof(drugPidCount), 1, f) == 1;
+    if (!ok)
+    {
+        ok = feof(f);
+        goto QUIT_LOAD;
+    }
+    ntst_log_info("sfallgv drugs fixes count = " + ntst::to_string(drugPidCount));
+    for (uint32 i = 0; i < drugPidCount; ++i)
+    {
+        uint32 pid;
+        ok = fread(&pid, sizeof(pid), 1, f) == 1;
+        if (!ok)
+            goto QUIT_LOAD;
+        drugFixes.push_back(pid);
+    }
 QUIT_LOAD:
+    mIsValid = ok && !ferror(f) && feof(f);
     const long int curPos = ftell(f);
     fseek(f,0,SEEK_END);
     const long int endPos = ftell(f);
-    if (!allRead || (curPos != endPos))
-        {
+    mIsValid = mIsValid && (curPos == endPos);
+    if (!mIsValid)
         ntst_log_warning("File: " + path + " was loaded with errors. Position " + ntst::to_string(curPos) + '/' + ntst::to_string(endPos));
-        }
     fclose(f);
-    }
+}

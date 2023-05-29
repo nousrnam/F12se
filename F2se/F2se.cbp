@@ -24,6 +24,13 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-Wno-deprecated-declarations" />
+					<Add option="-pipe" />
+					<Add option="-mthreads" />
+					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
+					<Add option="-Wno-long-long" />
+					<Add option="-Wno-variadic-macros" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-D__WXMSW__" />
 				</Compiler>
 				<Linker>
 					<Add option="-mthreads -static" />
@@ -49,7 +56,14 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-Wno-deprecated-declarations -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -fno-stack-protector" />
+					<Add option="-pipe" />
+					<Add option="-mthreads" />
+					<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
+					<Add option="-Wno-long-long" />
+					<Add option="-Wno-variadic-macros" />
 					<Add option="-DNDEBUG" />
+					<Add option="-D__GNUWIN32__" />
+					<Add option="-D__WXMSW__" />
 				</Compiler>
 				<Linker>
 					<Add option="-O2" />
@@ -86,28 +100,26 @@
 				<Option output="bin/ReleaseVS/F12se" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/ReleaseVS/" />
 				<Option type="0" />
-				<Option compiler="msvc10" />
-				<Option projectCompilerOptionsRelation="1" />
+				<Option compiler="microsoft_visual_c_2019" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="/MT" />
 					<Add option="/GL" />
 					<Add option="/EHc" />
-					<Add option="/EHs" />
 					<Add option="/Gy" />
 					<Add option="/GF" />
 					<Add option="/Oy" />
 					<Add option="/Oi" />
-					<Add option="/Ox" />
+					<Add option="/O2" />
 					<Add option="/W3" />
-					<Add option="/Ob2" />
+					<Add option="/EHsc /Ob2 /GS- /Gw" />
 					<Add option="/DNDEBUG" />
 					<Add option="/D_CRT_SECURE_NO_WARNINGS" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/D_CRT_NONSTDC_NO_DEPRECATE" />
 				</Compiler>
 				<Linker>
-					<Add option="/LTCG /FIXED /OPT:REF" />
+					<Add option="/LTCG /OPT:REF /OPT:ICF=6 /MANIFEST:EMBED" />
 					<Add library="rpcrt4" />
 					<Add library="wxmsw32u_core" />
 					<Add library="wxbase32u" />
@@ -115,13 +127,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-pipe" />
-			<Add option="-mthreads" />
-			<Add option='[[if (PLATFORM == PLATFORM_MSW &amp;&amp; (GetCompilerFactory().GetCompilerVersionString(_T(&quot;gcc&quot;)) &gt;= _T(&quot;4.0.0&quot;))) print(_T(&quot;-Wno-attributes&quot;));]]' />
-			<Add option="-Wno-long-long" />
-			<Add option="-Wno-variadic-macros" />
-			<Add option="-D__GNUWIN32__" />
-			<Add option="-D__WXMSW__" />
 			<Add directory="../F2seMyLibs" />
 			<Add directory="../F2seMyLibs/SimpleHexEdit" />
 			<Add directory="../F2seTPL" />

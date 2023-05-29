@@ -1,3 +1,20 @@
+Code::Blocks + Visual Studio 2019 
+cl.exe, link.exe
+c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x86
+rc.exe
+C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\rc.exe
+includes (search directories->compiler)
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include
+search directories->linker
+C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x86
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\onecore\x86
+C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x86
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x86\store
+
+
 Когда компилю tdmgcc в версиях wxWidgets после 3.0.x интерфейс корявится.
 
 
