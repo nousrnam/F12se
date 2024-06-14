@@ -15,12 +15,12 @@ Editing of inventory is dangerous, because information about format is incomplet
 
 If you delete map from "List of *.sav files"(Maps tab), it will return map to its original state next time when you visit it. (When you delete maps from list, you must be in some other location or savegame will be damaged). May be useful to respawn accidentally killed NPC or something like that.
 
-If you change character stats, better change "Bonus Stats" than "Base Stats". In game stats = base + bonus, but some of base stats are recalculated by game engine at each load. Also some stats have ranges can be seen there: http://www.nma-fallout.com/forum/viewtopic.php?p=664636#664636
+If you change character stats, better change "Bonus Stats" than "Base Stats". In game stats = base + bonus, but some of base stats are recalculated by game engine at each load. Also some stats have ranges can be seen there: https://www.nma-fallout.com/threads/engine-reversing-exploration.188326/#post-3634316
 
 3. Misc tab. "Bugfixes"
 
 "Ghost mode" box must always be uncheked. If it is checked, then I bet you are "drawn under objects and scenery and cannot be seen by other critters"
-Some information: http://www.nma-fallout.com/forum/viewtopic.php?p=662138
+Some information: https://www.nma-fallout.com/threads/ghost-mode-fixer.188353/
 
 "Clear combat info" button: If you save in combat, it can corrupt your savegame and you will receive message that game unable to load savegame. Button clears combat info and turns combat mode off.
 
