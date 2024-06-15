@@ -1,3 +1,3 @@
-cmake -A Win32 -B "F12seBuild"
-cmake --build F12seBuild --config Release
+cmake -A Win32 -T v141_xp -B "F12seBuild" -DF12SE_PUBLIC_BUILD=ON
+cmake --build F12seBuild --verbose --config Release
 pause
