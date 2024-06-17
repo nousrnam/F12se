@@ -370,7 +370,12 @@ std::vector<std::string> GetSubDirsVec(const std::string& dir)
     else
         {
         DWORD er = GetLastError();
-        LogWinError(std::string("Can't open directory: ") + dir + " error: ", er, er == ERROR_FILE_NOT_FOUND ? NTST_LOGM_INFO : NTST_LOGM_WARNING);
+        ntst_log_modes logMode;
+        if ((er == ERROR_PATH_NOT_FOUND) || (er == ERROR_FILE_NOT_FOUND))
+            logMode = NTST_LOGM_INFO;
+        else
+            logMode = NTST_LOGM_WARNING;
+        LogWinError(std::string("Can't open directory: ") + dir + " error: ", er, logMode);
         }
     return subDirs;
     }

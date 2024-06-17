@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <fstream>
+#include <iostream>
 #ifdef _WIN32
 #include <Shlobj.h>
 #endif
@@ -352,68 +354,39 @@ bool DataModel::InitAll(const Settings *s)
     }
 
 bool DataModel::InitAllDo(const Settings *s)
-    {
+{
     if (s == NULL)
-        {
+    {
         if (settings.gamePath.empty())
             return false;
-        }
+    }
     else
-        {
         settings = *s;
-        }
     const std::string falloutDir = GetFalloutDir();
+    const std::string falloutDirSep = falloutDir + DIR_SEPARATOR;
     ntst_log_info("Fallout" + ntst::to_string(GetFalloutNum()) + " directory is set to \"" + falloutDir + "\"");
     GetF2ExeVersionAndPerksDump();
-    if (settings.falloutCfgOverride.empty())
-        {
-        if (IsFallout1())
-            falloutcfgFullPath = falloutDir + DIR_SEPARATOR F1_CFG;
-        else
-            falloutcfgFullPath = falloutDir + DIR_SEPARATOR F2_CFG;
-        }
-    else
-        falloutcfgFullPath = falloutDir + DIR_SEPARATOR + settings.falloutCfgOverride;
-    ntst_log_info("Config file is set to " + falloutcfgFullPath);
-    fcfg.Load(falloutcfgFullPath);
-    if (fcfg.Empty())
-        ntst_log_warning(falloutcfgFullPath + " is empty or does not exist.");
-
-    if (settings.falloutLngDirOverride.empty())
-        {
-        ntst_log_info("Loading msg dir from: " + falloutcfgFullPath);
-        actualLanguageDir = fcfg.GetValue("system", "language", "english");
-        }
-    else
-        {
-        actualLanguageDir = settings.falloutLngDirOverride;
-        ntst_log_info("Using specified msg dir: " + actualLanguageDir);
-        }
-    std::string textPath = "Text\\" + actualLanguageDir + "\\game\\";
-    ntst_log_info("Path to msg files is set to: " + textPath);
-
+    // Sfall stuff
     bool dataLoadOrderPatch = false;
     bool dataLoadOrderPatchDefault = false;
     unsigned a, b, c, d;
-    const std::string sfallPath = falloutDir + DIR_SEPARATOR "ddraw.dll";
+    const std::string sfallPath = falloutDirSep + "ddraw.dll";
     GetFileVersionResult gfvr = GetFileVersion(sfallPath, a, b, c, d);
     if (gfvr == GFVR_NO_FILE)
-        {
         ntst_log_info("sfall not found: " + sfallPath);
-        }
     else
-        {
+    {
         if (gfvr == GFVR_ERROR && !settings.isFallout1)
-            {
+        {
             ntst_log_warning("Can't get sfall version: \"" + sfallPath + "\". Assuming DataLoadOrderPatch is enabled by default.");
             dataLoadOrderPatchDefault = true;
-            }
+        }
         else
-            {
+        {
             ntst_log_info("Sfall version: " + ntst::to_string(a) + '.'
-                           + ntst::to_string(b) + '.'
-                           + ntst::to_string(c) + '.'
-                           + ntst::to_string(d));
+                          + ntst::to_string(b) + '.'
+                          + ntst::to_string(c) + '.'
+                          + ntst::to_string(d));
             // The setting is changed to be enabled by default in the new 4.1.9/3.8.19 (the reason is to prevent some unexpected issues)
             dataLoadOrderPatchDefault = ((a == 1) && (b >= 8)) // Fallout Nevada (Crazy Edition) 1.8.0.0
                     || ((a == 3) && (b > 8))
@@ -421,28 +394,60 @@ bool DataModel::InitAllDo(const Settings *s)
                     || ((a == 4) && (b > 1))
                     || ((a == 4) && (b == 1) && (c >= 9))
                     || (a > 4);
-            }
         }
+    }
     IniFile ddraw_ini;
     std::vector<std::string> sfallExtraPatches;
     std::string patch000Mask = "patch%03d.dat";
     const bool useSfallSettings = (gfvr != GFVR_NO_FILE)
-            && ddraw_ini.Load(falloutDir + DIR_SEPARATOR "ddraw.ini");
+            && ddraw_ini.Load(falloutDirSep + "ddraw.ini");
     if (useSfallSettings)
-        {
+    {
         ntst_log_info("ddraw.ini loaded. Maybe it has something interesting.");
         ddraw_ini.TryGetValue("Misc", "PatchFile", patch000Mask);
         dataLoadOrderPatch = ddraw_ini.GetValueBool("Misc", "DataLoadOrderPatch", dataLoadOrderPatchDefault);
-        }
+    }
     if (dataLoadOrderPatch)
         ntst_log_info("Using new loading order.");
     else
         ntst_log_info("Using old loading order.");
-    fileFinder.ClearSources();
+
+    if (settings.falloutCfgOverride.empty())
+    {
+        std::string filename;
+        if (IsFallout1())
+            filename = F1_CFG;
+        else
+            filename = F2_CFG;
+        if (useSfallSettings)
+            ddraw_ini.TryGetValue("Misc", "ConfigFile", filename);
+        falloutcfgFullPath = falloutDirSep + filename;
+    }
+    else
+        falloutcfgFullPath = falloutDirSep + settings.falloutCfgOverride;
+    ntst_log_info("Config file is set to " + falloutcfgFullPath);
+    fcfg.Load(falloutcfgFullPath);
+    if (fcfg.Empty())
+        ntst_log_warning(falloutcfgFullPath + " is empty or does not exist.");
+
+    if (settings.falloutLngDirOverride.empty())
+    {
+        ntst_log_info("Loading msg dir from: " + falloutcfgFullPath);
+        actualLanguageDir = fcfg.GetValue("system", "language", "english");
+    }
+    else
+    {
+        actualLanguageDir = settings.falloutLngDirOverride;
+        ntst_log_info("Using specified msg dir: " + actualLanguageDir);
+    }
+    std::string textPath = "Text\\" + actualLanguageDir + "\\game\\";
+    ntst_log_info("Path to msg files is set to: " + textPath);
+
     /*
 Searching order:
 master_patches (if DataLoadOrderPatch in ddraw.ini)
 critter_patches (if DataLoadOrderPatch in ddraw.ini)
+mods dir = content of mods_order.txt, or everything sorted if [ExtraPatches] AutoloadingMods=1 and mods_order.txt doesn't exist
 ddraw.ini [ExtraPatches] PatchFile99 - PatchFile0
 ddraw.ini [ExtraPatches] AutoSearchPath
 sfall.dat
@@ -455,81 +460,113 @@ master_patches (if not DataLoadOrderPatch in ddraw.ini)
 master_dat
 game directory. Although should be current directory. But user can create link to executable and specify any directory as current.
     */
+    fileFinder.ClearSources();
     fileFinder.SetDatFileIsF1(settings.isFallout1);
     if (dataLoadOrderPatch)
-        {
+    {
         AddPathFromCfg(fileFinder, fcfg, "master_patches", "data", falloutDir);
         AddPathFromCfg(fileFinder, fcfg, "critter_patches", "data", falloutDir);
-        }
+    }
+    // I have no idea how to load correctly. My memory may be wrong...
+    // But AutoSearchPath was lower priority than ExtraPatches and files were not sorted.(Ordered as Windows return them)
+    // Now there is no AutoSearchPath in sfall and mods dir have higher priority with mods_order.txt file inside.
+    // Also there was/is mods_order.ini that is different from mods_order.txt
     if (useSfallSettings)
-        {
+    {
         const IniSection* patchesSec = ddraw_ini.FindSection("ExtraPatches");
+        std::string autoSearchPath;
+        bool autoLoadMods = false;
         if (patchesSec != NULL)
+        {
+            autoLoadMods = patchesSec->GetValueBool("AutoloadingMods");
+            if (!autoLoadMods)
+                autoSearchPath = patchesSec->GetValue("AutoSearchPath");
+        }
+        const bool newModsDirLogic = autoSearchPath.empty() || autoLoadMods;
+        if (newModsDirLogic)
+        { // Assume new mods dir with mods_order.txt
+            const std::string modsFullPathStart = falloutDirSep + "mods";
+            const std::string modsFullPathStartSep = modsFullPathStart + DIR_SEPARATOR;
+            const std::string modsOrderFullPath = modsFullPathStartSep + "mods_order.txt";
+            std::vector<std::string> modsFullPath;
+            std::string patch;
+            std::ifstream loadOrderFile(modsOrderFullPath, std::ios::in);
+            if (loadOrderFile.is_open())
             {
-            for (int i = 99; i >= 0; --i)
-                {
-                std::string path = patchesSec->GetValue("PatchFile" + ntst::to_string(i));
-                if (!path.empty())
-                    {
-                    std::string fullpath = MakeFullFalloutPath(path, falloutDir);
+                while (std::getline(loadOrderFile, patch))
+                { // To disable a mod temporarily, you can comment it out by adding a ';' or '#' to the beginning of the line
+                    if (patch.empty() || (patch.front() == ';')  || (patch.front() == '#'))
+                        continue;
+                    std::string fullpath = modsFullPathStartSep + patch;
                     if (FileOrDirectoryExists(fullpath))
-                        {
-                        fileFinder.AddSource(fullpath);
-                        }
-                    }
-                }
-            const std::string autoSearchPath = patchesSec->GetValue("AutoSearchPath", "mods");
-            const std::string modsFullPath = MakeFullFalloutPath(autoSearchPath, falloutDir);
-            if (DirectoryExists(modsFullPath))
-                {
-                std::vector<std::string> mods = GetSubDirsAndFiles(modsFullPath, "*.dat");
-                for (std::vector<std::string>::const_reverse_iterator it = mods.rbegin(); it != mods.rend(); ++it)
-                    {
-                    AddPathToFF(*it, fileFinder, modsFullPath);
-                    }
+                        modsFullPath.push_back(fullpath);
                 }
             }
+            else if (DirectoryExists(modsFullPathStart))
+            {
+                modsFullPath = GetSubDirsAndFiles(modsFullPathStart, "*.dat");
+                std::sort(modsFullPath.begin(), modsFullPath.end());
+                for (std::vector<std::string>::iterator it = modsFullPath.begin(); it != modsFullPath.end(); ++it)
+                    *it = modsFullPathStartSep + *it;
+            }
+            for (std::vector<std::string>::const_reverse_iterator it = modsFullPath.rbegin(); it != modsFullPath.rend(); ++it)
+                fileFinder.AddSource(*it);
         }
-    std::string patch000Prev;
+        if (patchesSec != NULL)
+            for (int i = 99; i >= 0; --i)
+            {
+                std::string path = patchesSec->GetValue("PatchFile" + ntst::to_string(i));
+                if (!path.empty())
+                {
+                    std::string fullpath = MakeFullFalloutPath(path, falloutDir);
+                    if (FileOrDirectoryExists(fullpath))
+                        fileFinder.AddSource(fullpath);
+                }
+            }
+        if (!newModsDirLogic)
+        { // Assume old AutoSearchPath without sorting
+            const std::string autoModsFullPath = MakeFullFalloutPath(autoSearchPath, falloutDir);
+            if (DirectoryExists(autoModsFullPath))
+            {
+                std::vector<std::string> mods = GetSubDirsAndFiles(autoModsFullPath, "*.dat");
+                for (std::vector<std::string>::const_reverse_iterator it = mods.rbegin(); it != mods.rend(); ++it)
+                    AddPathToFF(*it, fileFinder, autoModsFullPath);
+            }
+        }
+    }
     std::vector<std::string> patches;
-    for (int i = 0; i < INT_MAX; ++i)
-        {
-        std::string patch000Cur = ntst::string_printf(patch000Mask.c_str(), i);
-        if (patch000Prev == patch000Cur)
-            break;
-        patch000Prev = patch000Cur;
-        std::string patch000Path = falloutDir + DIR_SEPARATOR + patch000Cur;
-        if (FileExists(patch000Path))
+    for (int i = 0; i < 1000; ++i)
+    {
+        std::string patch000Path = falloutDirSep + ntst::string_printf(patch000Mask.c_str(), i);
+        if (FileOrDirectoryExists(patch000Path))
             patches.push_back(patch000Path);
-        else
-            break;
-        }
-    const std::string sfalldatPath = falloutDir + DIR_SEPARATOR + "sfall.dat";
-    if (FileExists(sfalldatPath))
+    }
+    const std::string sfalldatPath = falloutDirSep + "sfall.dat";
+    if (FileOrDirectoryExists(sfalldatPath))
         patches.push_back(sfalldatPath);
     for (std::vector<std::string>::const_reverse_iterator it = patches.rbegin(); it != patches.rend(); ++it)
-        {
+    {
         AddPathToFF(*it, fileFinder, falloutDir);
-        }
+    }
     if (!dataLoadOrderPatch)
         AddPathFromCfg(fileFinder, fcfg, "critter_patches", "data", falloutDir);
     AddPathFromCfg(fileFinder, fcfg, "critter_dat", "critter.dat", falloutDir);
     if (!IsFallout1())
-        {
+    {
         IniFile f2_res;
-        if (f2_res.Load(falloutDir + DIR_SEPARATOR "f2_res.ini"))
-            {
+        if (f2_res.Load(falloutDirSep + "f2_res.ini"))
+        {
             ntst_log_info("f2_res.ini loaded. Maybe it has f2_res_dat and f2_res_patches.");
             std::string tmp;
             if (f2_res.TryGetValue("MAIN", "f2_res_patches", tmp))
                 AddPathToFF(tmp, fileFinder, falloutDir);
             if (f2_res.TryGetValue("MAIN", "f2_res_dat", tmp))
                 AddPathToFF(tmp, fileFinder, falloutDir);
-            }
         }
+    }
     saveDirPath = fcfg.GetValue("system", "master_patches", "data") + DIR_SEPARATOR + "SAVEGAME";
     if (IsPathRelative(saveDirPath))
-        saveDirPath = falloutDir + DIR_SEPARATOR + saveDirPath;
+        saveDirPath = falloutDirSep + saveDirPath;
     if (!dataLoadOrderPatch)
         AddPathFromCfg(fileFinder, fcfg, "master_patches", "data", falloutDir);
     AddPathFromCfg(fileFinder, fcfg, "master_dat", "master.dat", falloutDir);
@@ -547,24 +584,24 @@ game directory. Although should be current directory. But user can create link t
     ntst_log_info(ntst::to_string(vault13gam.size()) + " GVARS loaded. Loading data\\ai.txt");
     LoadIniFileFromMemBuf(aiTxt, fileFinder.GetFile("data\\ai.txt"));
     if (!IsFallout1())
-        {
+    {
         ntst_log_info("Loading data\\party.txt");
         LoadIniFileFromMemBuf(partyTxt, fileFinder.GetFile("data\\party.txt"));
         ntst_log_info("Party members count: " + ntst::to_string(partyTxt.GetIniSectionCount()) + " Loading data\\maps.txt");
         LoadIniFileFromMemBuf(mapsTxt, fileFinder.GetFile("data\\maps.txt"));
-        }
+    }
     else
-        {
+    {
         partyTxt.Clear();
         mapsTxt.Clear();
-        }
+    }
 
     ntst_log_info("frmWorker.InitAll");
     frmWorker.SetGamma(settings.brightness * 0.179993 / 100 + 1.0);
     frmWorker.InitAll(fileFinder);
 
     if (!IsFallout1())
-        {
+    {
         ntst_log_info("karmavarTxt.LoadFromMem");
         karmavarTxt.LoadFromMem(fileFinder.GetFile("data\\karmavar.txt"));
         ntst_log_info("holodiskTxt.LoadFromMem");
@@ -573,14 +610,14 @@ game directory. Although should be current directory. But user can create link t
         questsTxt.LoadFromMem(fileFinder.GetFile("data\\quests.txt"));
         ntst_log_info("cityTxt.Load");
         cityTxt.Load(fileFinder.GetFile("data\\city.txt"));
-        }
+    }
     else
-        {
+    {
         karmavarTxt.Clear();
         holodiskTxt.Clear();
         questsTxt.Clear();
         cityTxt.Clear();
-        }
+    }
 
     ntst_log_info("scriptList.LoadFromMem");
     scriptList.LoadFromMem(fileFinder.GetFile("scripts\\scripts.lst"));
@@ -588,62 +625,62 @@ game directory. Although should be current directory. But user can create link t
     gameCodePage = GCP_SYSTEM_DEFAULT;
     std::string lngDir = StrToLow(actualLanguageDir);
     if (lngDir == "cht")
-        {
+    {
         gameCodePage = GCP_CH_TR;
         ntst_log_info("Looks like Chinese traditional version.");
-        }
+    }
     else if (lngDir == "chs")
-        {
+    {
         gameCodePage = GCP_CH_S;
         ntst_log_info("Looks like Chinese simplified version.");
-        }
+    }
     else
-        {
+    {
         MemBuffer memBuf = fileFinder.GetFile(textPath + "lsgame.msg");
         if (memBuf.GetSize() > MSG_RUS_CHECK_LEN)
-            {
+        {
             const char* cur = (const char*)memBuf.GetAddress();
             const char* end = cur + memBuf.GetSize() - MSG_RUS_CHECK_LEN + 1;
             bool isRussianVersionNeedsCodePageConversion = false;
             unsigned curMonth = 0;
             while (cur != end)
-                {
+            {
                 if (memcmp(cur, monthsFromRussianVersion[curMonth], MSG_RUS_CHECK_LEN) == 0)
-                    {
+                {
                     ++curMonth;
                     if (curMonth >= 12)
-                        {
+                    {
                         isRussianVersionNeedsCodePageConversion = true;
                         break;
-                        }
                     }
-                ++cur;
                 }
+                ++cur;
+            }
             if (isRussianVersionNeedsCodePageConversion)
-                {
+            {
                 bool fargus = true;
                 while (cur != end)
-                    {
+                {
                     if (memcmp(cur, levCorpRussianTest, MSG_RUS_CHECK_LEN) == 0)
-                        {
+                    {
                         fargus = false;
                         break;
-                        }
-                    ++cur;
                     }
+                    ++cur;
+                }
                 if (fargus)
-                    {
+                {
                     gameCodePage = GCP_RUS_866;
                     ntst_log_info("Russian version from Fargus detected.");
-                    }
+                }
                 else
-                    {
+                {
                     gameCodePage = GCP_RUS_LEVCORP;
                     ntst_log_info("Russian version from LevCorp detected.");
-                    }
                 }
             }
         }
+    }
     StringConvFunc convFunc = GetToWideConvFunc(gameCodePage);
 
     LoadVectorFromMsg(stats, STATS_CNT, textPath + "stat.msg", 100, convFunc, fileFinder);
@@ -656,28 +693,28 @@ game directory. Although should be current directory. But user can create link t
     protoMSG.Load(fileFinder.GetFile(textPath + "proto.msg"), convFunc);
     LoadArrayFromMsg(itemsTypes, NTST_ARRAY_LEN(itemsTypes), protoMSG, 150);
     if (IsFallout1())
-        {
+    {
         LoadVectorFromMsg(perks, F1_PERKS_CNT, textPath + "perk.msg", 101, convFunc, fileFinder);
         LoadVectorFromMsg(killTypes, F1_KILL_TYPES_CNT, protoMSG, F1_KILL_TYPES_MSG_START);
-        }
+    }
     else
-        {
+    {
         LoadVectorFromMsg(perks, F2_PERKS_CNT, textPath + "perk.msg", 101, convFunc, fileFinder);
         LoadVectorFromMsg(killTypes, F2_KILL_TYPES_CNT, protoMSG, F2_KILL_TYPES_MSG_START);
-        }
+    }
 
     proItemMSG.Load(fileFinder.GetFile(textPath + "pro_item.msg"), convFunc);
     proCritterMSG.Load(fileFinder.GetFile(textPath + "pro_crit.msg"), convFunc);
     mapMSG.Load(fileFinder.GetFile(textPath + "map.msg"), convFunc);
     worldmapMSG.Load(fileFinder.GetFile(textPath + "worldmap.msg"), convFunc);
     if (!IsFallout1())
-        {
+    {
         questsMSG.Load(fileFinder.GetFile(textPath + "quests.msg"), convFunc);
-        }
+    }
     else
-        {
+    {
         questsMSG.Clear();
-        }
+    }
     pipboyMSG.Load(fileFinder.GetFile(textPath + "pipboy.msg"), convFunc);
 
     RefreshSaveSlots();
@@ -686,33 +723,33 @@ game directory. Although should be current directory. But user can create link t
 #ifdef _WIN32
     char progf[MAX_PATH];
     if (SHGetFolderPathA(NULL, CSIDL_PROGRAM_FILES, NULL, 0, progf) == S_OK)
-        {
+    {
         std::string progfStr = progf;
         ntst_log_info("Check if game is installed in Program Files to give warning: " + progfStr);
         if (strncmp(progfStr.c_str(), falloutDir.c_str(), progfStr.size()) == 0)
             ntst_log_warning("Seems like game is installed in Program Files. Windows might prevent changes to files there! Don't ask why you don't see changes in game.");
-        }
+    }
     else
         ntst_log_warning("Can't get Program Files path to check if game installed there.");
 #endif
     // Users sometime set path to "gamedir\data\savegame" or "gamedir\data\savegame\slot01" instead of "gamedir"
     if (!IsValid())
-        {
+    {
         ntst_log_warning("Data model is invalid. Maybe wrong path? Will try to find correct path.");
         std::vector<FalloutDir> falloutDir;
         std::string curdir = GetFalloutDir();
         TrimTrailingSlashes(curdir);
         std::string parentDir, unused;
         while (SplitPath(curdir, parentDir, unused))
-            {
+        {
             if (AddDirectoryIfFallout(falloutDir, parentDir))
                 break;
             curdir = parentDir;
-            }
+        }
         if (falloutDir.empty())
             ntst_log_warning("Correct path not found.");
         else
-            {
+        {
             FalloutDir backup(settings.gamePath, settings.isFallout1);
             settings.gamePath = falloutDir.front().path;
             settings.isFallout1 = falloutDir.front().isFallout1;
@@ -720,15 +757,15 @@ game directory. Although should be current directory. But user can create link t
             if (IsValid())
                 ntst_log_warning("Path was changed to: " + settings.gamePath);
             else
-                {
+            {
                 // Failed. Restoring settings.
                 settings.gamePath = backup.path;
                 settings.isFallout1 = backup.isFallout1;
-                }
             }
         }
-    return true;
     }
+    return true;
+}
 
 /*
 I believe I've figured out where Perks and Traits are stored (though I haven't tested these in-game, so it might all be an elaborate mistake):
