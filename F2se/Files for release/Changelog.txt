@@ -1,7 +1,8 @@
 ﻿YYYY-MM-DD
 
-2024-06-18
+2024-06-19
 -Improved data loading. Should be compatible with Fallout Yesterday.
+-Windows XP support is back.
 
 2023-05-29
 -Some improvements for editing sfallgv.sav but they are not well tested.

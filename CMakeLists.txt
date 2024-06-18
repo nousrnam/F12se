@@ -7,10 +7,10 @@ set(CMAKE_MESSAGE_LOG_LEVEL TRACE)
 option(F12SE_PUBLIC_BUILD "Public build = maximum optimizations + static linking" OFF)
 if(F12SE_PUBLIC_BUILD)
     # https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170&viewFallbackFrom=vs-2019
-    # But everything for WinXp in this files is useless.
-    # Tried: Visual Studio 2019 + Visual Studio 2017 - Windows XP (v141_xp)
+    # Doesn't work: Visual Studio 2019 + v141_xp toolset from Visual Studio 2017
     # tolower/toupper call LCMapStringA(which is fine, Windows XP has it)
     # Then statically linked LCMapStringA calls LCMapStringEx(Windows Vista or later)
+    # Does work: Visual Studio 2015 + v140_xp (Select XP toolset during installation)
     message(STATUS "==PUBLIC BUILD==")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -195,11 +195,14 @@ else()
         # optional non GUI features
         set(wxUSE_IPC OFF)
         set(wxUSE_CONSOLE_EVENTLOOP OFF)
+        set(wxUSE_FS_ARCHIVE OFF)
         set(wxUSE_FS_INET OFF)
+        set(wxUSE_FS_ZIP OFF)
         set(wxUSE_PRINTF_POS_PARAMS OFF)
         set(wxUSE_SOUND OFF)
         set(wxUSE_TARSTREAM OFF)
         set(wxUSE_WEBREQUEST OFF)
+        set(wxUSE_ZIPSTREAM OFF)
 
         # optional "big" GUI features
         set(wxUSE_HELP OFF)
