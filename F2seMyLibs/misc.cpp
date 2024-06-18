@@ -402,7 +402,12 @@ std::vector<std::string> GetFiles(const std::string& dir, const std::string& mas
     else
         {
         DWORD er = GetLastError();
-        LogWinError(std::string("Can't get files by mask: ") + fullpath + " error: ", er, er == ERROR_FILE_NOT_FOUND ? NTST_LOGM_INFO : NTST_LOGM_WARNING);
+        ntst_log_modes logMode;
+        if ((er == ERROR_PATH_NOT_FOUND) || (er == ERROR_FILE_NOT_FOUND))
+            logMode = NTST_LOGM_INFO;
+        else
+            logMode = NTST_LOGM_WARNING;
+        LogWinError(std::string("Can't get files by mask: ") + fullpath + " error: ", er, logMode);
         }
     return files;
     }

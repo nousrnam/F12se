@@ -1,5 +1,8 @@
 ﻿YYYY-MM-DD
 
+2024-06-18
+-Improved data loading. Should be compatible with Fallout Yesterday.
+
 2023-05-29
 -Some improvements for editing sfallgv.sav but they are not well tested.
 -Previous version triggered virustotal a lot, so now I use Visual Studio instead of TDM-GCC. It gives less warnings.

@@ -299,7 +299,8 @@ void SFallGV::Load(const std::string& path)
         drugFixes.push_back(pid);
     }
 QUIT_LOAD:
-    mIsValid = ok && !ferror(f) && feof(f);
+    mIsValid = ok && !ferror(f);
+    // feof is true only after reading past end. So Comparing cur and end positions.
     const long int curPos = ftell(f);
     fseek(f,0,SEEK_END);
     const long int endPos = ftell(f);
